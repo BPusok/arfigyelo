@@ -1,0 +1,50 @@
+name: Webes Felület Telepítése (GitHub Pages)
+
+on:
+  push:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kód letöltése
+        uses: actions/checkout@v4
+
+      - name: Node.js beállítása
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Építés (Vite Build)
+        working-directory: web
+        run: |
+          npm ci
+          npm run build
+
+      - name: GitHub Pages konfigurálása
+        uses: actions/configure-pages@v4
+
+      - name: Elkészült weboldal feltöltése
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'web/dist'
+
+      - name: Publikálás GitHub Pages-re
+        id: deployment
+        uses: actions/deploy-pages@v4
