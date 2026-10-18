@@ -1,0 +1,6 @@
+playwright
+supabase
+google-genai
+python-dotenv
+pypdf
+pydantic

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heti Árfigyelő – Lidl & Aldi Akciók</title>
+  <meta name="description" content="Heti Lidl és Aldi akciós újság árak összehasonlítása, keresése és ártörténete.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Fejléc -->
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="brand">
+          <div class="logo-badge">🛒</div>
+          <div>
+            <h1>Heti Árfigyelő</h1>
+            <p class="subtitle">Lidl & Aldi akciós árak összehasonlítása és története</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="watchlist-toggle-btn" class="btn-pill" title="Csak figyelt termékek mutatása">
+            <span class="icon">⭐</span>
+            <span>Figyelőlista</span>
+            <span id="watchlist-count" class="badge-count">0</span>
+          </button>
+          <div class="data-status" id="data-status">
+            <span class="status-dot"></span>
+            <span id="status-text">Betöltés...</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Fő tartalom -->
+    <main class="main-content">
+      <!-- Vezérlősáv: Kereső & Szűrők -->
+      <section class="controls-panel">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Keress termékre (pl. sajt, vaj, alma, kávé)..." autocomplete="off">
+          <button id="clear-search" class="clear-btn" style="display:none;">✕</button>
+        </div>
+
+        <div class="filters-row">
+          <!-- Bolt választó -->
+          <div class="filter-group">
+            <label>Bolt:</label>
+            <div class="segmented-control" id="store-filter">
+              <button class="seg-btn active" data-store="all">Mind</button>
+              <button class="seg-btn store-lidl" data-store="lidl">Lidl</button>
+              <button class="seg-btn store-aldi" data-store="aldi">Aldi</button>
+            </div>
+          </div>
+
+          <!-- Kategória választó -->
+          <div class="filter-group">
+            <label for="category-select">Kategória:</label>
+            <select id="category-select">
+              <option value="all">Minden kategória</option>
+            </select>
+          </div>
+
+          <!-- Rendezés -->
+          <div class="filter-group">
+            <label for="sort-select">Rendezés:</label>
+            <select id="sort-select">
+              <option value="name-asc">Név szerint (A-Z)</option>
+              <option value="price-asc">Akciós ár szerint (Legolcsóbb)</option>
+              <option value="discount-desc">Legnagyobb kedvezmény (%)</option>
+              <option value="unit-asc">Egységár szerint (Ft/kg/l)</option>
+              <option value="date-desc">Legfrissebb érvényesség</option>
+            </select>
+          </div>
+
+          <!-- Nézetváltó -->
+          <div class="view-switchers">
+            <button id="view-grid-btn" class="icon-toggle active" title="Kártyás nézet">⊞</button>
+            <button id="view-table-btn" class="icon-toggle" title="Táblázatos nézet">☰</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Statisztika & Összegzés sáv -->
+      <div class="results-bar">
+        <span id="results-count">0 ajánlat található</span>
+        <div class="results-legend">
+          <span class="legend-item"><span class="store-dot lidl"></span> Lidl</span>
+          <span class="legend-item"><span class="store-dot aldi"></span> Aldi</span>
+          <span class="legend-item"><span class="tag-pill flyer">📰 Újság</span></span>
+        </div>
+      </div>
+
+      <!-- Termék lista tároló -->
+      <div id="products-container" class="products-grid">
+        <!-- Dinamikus tartalom -->
+      </div>
+
+      <!-- Üres állapot -->
+      <div id="empty-state" class="empty-state" style="display:none;">
+        <div class="empty-icon">🔎</div>
+        <h3>Nincs a keresésnek megfelelő ajánlat</h3>
+        <p>Próbálj meg más keresőszót vagy töröld a szűrőket.</p>
+        <button id="reset-filters-btn" class="btn-primary">Szűrők visszaállítása</button>
+      </div>
+    </main>
+
+    <!-- Ártörténet Modal -->
+    <div id="history-modal" class="modal-backdrop" style="display:none;">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div>
+            <h3 id="modal-product-name">Termék ártörténete</h3>
+            <span id="modal-category" class="cat-pill"></span>
+          </div>
+          <button id="modal-close-btn" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="history-summary" id="modal-summary">
+            <!-- Statisztikák (legjobb ár, átlagár, legutóbbi) -->
+          </div>
+          <h4>Rögzített ajánlatok időrendben:</h4>
+          <div id="modal-history-list" class="history-timeline">
+            <!-- Események listája -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lábléc -->
+    <footer class="app-footer">
+      <div class="footer-inner">
+        <p>Árfigyelő &bull; Adatok forrása: Lidl.hu és Aldi.hu heti akciós katalógusok</p>
+        <p class="footer-meta">Supabase PostgreSQL &bull; Gemini 3.8 Flash Normalizálás &bull; Automatikus frissítés: Csütörtök 08:00</p>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
