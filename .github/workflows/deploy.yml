@@ -38,7 +38,9 @@ jobs:
           npm run build
 
       - name: GitHub Pages konfigurálása
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Elkészült weboldal feltöltése
         uses: actions/upload-pages-artifact@v3
