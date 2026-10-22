@@ -22,6 +22,7 @@ CATEGORIES = [
 
 class ItemNorm(BaseModel):
     raw_name: str
+    brand: str | None = None
     product: str
     product_group: str
     category: str
@@ -43,6 +44,12 @@ def parse_card_text(text: str) -> dict | None:
     base_unit = "db"
 
     for line in lines:
+        # Kiszűrjük a kedvezmény százalékokat és akciós jelvényeket
+        if re.search(r"^[-\s]*\d+\s*%", line) or re.search(r"^\d+\s*%", line):
+            continue
+        if line.lower() in ("akció", "új", "szuper ár", "kedvezmény", "kiemelt ajánlat", "szezonális", "akció!", "többet olcsóbban"):
+            continue
+
         m_u = re.search(r"(\d[\d\s.]*)\s*Ft\s*/\s*(kg|l)\b", line, re.I)
         if m_u:
             try:
@@ -79,6 +86,7 @@ def normalize_batch(client: genai.Client, raw_items: list[dict], cat_hint: str) 
         f"Kérlek normalizáld az alábbi magyar Aldi bolti termékeket (kategória: {cat_hint}).\n"
         "Minden tételhez add meg:\n"
         "- raw_name: pontosan az eredeti név\n"
+        "- brand: gyártó vagy sajátmárka nagybetűvel (pl. 'MILSANI', 'KOKÁRDÁS', 'TOLLE', 'RISKA', 'BORDS EVE', 'LE GUSTO', 'CUCINA NOBILE', 'BELLASAN'), vagy null ha nincs külön márka\n"
         "- product: egységes rövid név márka nélkül (pl. 'UHT Tej 2,8%', 'Görög krémjoghurt')\n"
         "- product_group: felsőbb szintű termékcsoport (pl. 'Tej és tejes italok', 'Joghurt', 'Kenyér és pékáru', 'Virsli', 'Sajt', 'Hús', 'Zöldség', 'Gyümölcs')\n"
         "- category: fő kategória\n"
@@ -189,6 +197,7 @@ def main():
             "store_id": "aldi",
             "product_id": pid,
             "raw_name": raw_name[:250],
+            "brand": (norm.brand.strip()[:100] if norm and norm.brand else None),
             "price": item["price"],
             "unit_price": item["unit_price"],
             "valid_from": today,

@@ -401,10 +401,46 @@ function render() {
   }
 }
 
+// Márka és tiszta terméknév szétválasztása
+function getBrandAndName(offer) {
+  let brand = (offer.brand || '').trim();
+  let name = (offer.raw_name || '').trim();
+
+  // Ha nincs külön rögzített márka, felismerjük a név elején lévő ismert márkaneveket vagy nagybetűs szavakat
+  if (!brand && name) {
+    const multiBrandMatch = name.match(/^(CHEF SELECT|SELECT & GO|BORDS EVE|LE GUSTO|SWEET VALLEY|SNACK FUN|RIO D'ORO|HAPPY HARVEST|BELLASAN|CUCINA NOBILE|OCEAN SEA|FREE FROM|JUST VEG!|FINEST BAKERY)\b/i);
+    if (multiBrandMatch) {
+      brand = multiBrandMatch[1].toUpperCase();
+    } else {
+      const singleWordMatch = name.match(/^([A-ZÁÉÍÓÖŐÚÜŰ]{2,})\b/);
+      if (singleWordMatch && !['UHT', 'ESL', 'BIO', 'XL', 'XXL', 'LIGHT', 'MIN', 'MAX', 'CSAK', 'MAGYAR', 'FRISS'].includes(singleWordMatch[1])) {
+        brand = singleWordMatch[1];
+      }
+    }
+  }
+
+  // Eltávolítjuk a márka előtagot a névből, hogy ne ismétlődjön kétszer
+  let cleanName = name;
+  if (brand && cleanName.toUpperCase().startsWith(brand.toUpperCase())) {
+    cleanName = cleanName.slice(brand.length).trim();
+    cleanName = cleanName.replace(/^[-:,\s]+/, '').trim();
+  }
+
+  if (!cleanName) {
+    cleanName = offer.products?.name || name;
+  }
+
+  return {
+    brand: brand ? brand.toUpperCase() : null,
+    name: cleanName
+  };
+}
+
 // Kártyás nézet renderelése
 function renderCards(items) {
   productsContainer.className = 'products-grid';
   productsContainer.innerHTML = items.map(o => {
+    const { brand, name: displayName } = getBrandAndName(o);
     const pName = o.products?.name || o.raw_name;
     const isStarred = watchlist.has(pName);
     const storeClass = o.store_id === 'lidl' ? 'lidl' : 'aldi';
@@ -446,7 +482,8 @@ function renderCards(items) {
         </div>
 
         <div class="card-body">
-          <h3 class="product-title" title="${escapeHtml(o.raw_name)}">${escapeHtml(o.raw_name)}</h3>
+          ${brand ? `<div class="product-brand">${escapeHtml(brand)}</div>` : ''}
+          <h3 class="product-title" title="${escapeHtml(displayName)}">${escapeHtml(displayName)}</h3>
           <div class="product-meta">
             ${groupTag}
             ${o.package ? `<span>${escapeHtml(o.package)}</span>` : ''}
@@ -491,6 +528,7 @@ function renderTable(items) {
       </thead>
       <tbody>
         ${items.map(o => {
+          const { brand, name: displayName } = getBrandAndName(o);
           const pName = o.products?.name || o.raw_name;
           const isStarred = watchlist.has(pName);
           const unitText = o.unit_price && o.products?.base_unit 
@@ -506,7 +544,10 @@ function renderTable(items) {
               </td>
               <td><span class="store-badge ${o.store_id}">${o.store_id.toUpperCase()}</span></td>
               <td><span class="tag-pill ${o.source === 'regular' ? 'regular' : 'flyer'}">${srcText}</span></td>
-              <td><strong>${escapeHtml(o.raw_name)}</strong></td>
+              <td>
+                ${brand ? `<div class="table-brand">${escapeHtml(brand)}</div>` : ''}
+                <strong>${escapeHtml(displayName)}</strong>
+              </td>
               <td>${escapeHtml(o.products?.product_group || '-')}</td>
               <td>${escapeHtml(o.package || '-')}</td>
               <td><strong style="color: #fff; font-family: var(--font-mono);">${Math.round(o.price).toLocaleString('hu-HU')} Ft</strong></td>

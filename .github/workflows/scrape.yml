@@ -2,8 +2,8 @@ name: Heti Árfigyelő Frissítés
 
 on:
   schedule:
-    # Minden csütörtökön reggel 6:00 UTC (8:00 magyar idő)
-    - cron: '0 6 * * 4'
+    # Minden szombaton 8:00 UTC (10:00 magyar idő)
+    - cron: '0 8 * * 6'
   workflow_dispatch: # Kézi indítás lehetősége gombnyomásra
 
 jobs:
@@ -31,4 +31,6 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: |
-          python scraper/run.py
+          python scraper/extract_all_flyers.py
+          python scraper/aldi_regular.py
+          python scraper/backfill_groups.py
