@@ -84,38 +84,64 @@ async function init() {
   await fetchOffers();
 }
 
-// Adatok lekérése a Supabase-ből
+// Adatok lekérése a Supabase-ből lapozással és tisztítással
 async function fetchOffers() {
   try {
     statusTextEl.textContent = 'Adatok betöltése...';
 
-    const { data, error } = await supabase
-      .from('offers')
-      .select(`
-        id,
-        store_id,
-        raw_name,
-        brand,
-        package,
-        price,
-        original_price,
-        unit_price,
-        valid_from,
-        valid_to,
-        source,
-        products (
+    let loadedOffers = [];
+    let from = 0;
+    const pageSize = 1000;
+    let hasMore = true;
+
+    while (hasMore) {
+      const { data, error } = await supabase
+        .from('offers')
+        .select(`
           id,
-          name,
-          category,
-          base_unit,
-          product_group
-        )
-      `)
-      .order('valid_from', { ascending: false });
+          store_id,
+          raw_name,
+          brand,
+          package,
+          price,
+          original_price,
+          unit_price,
+          valid_from,
+          valid_to,
+          source,
+          products (
+            id,
+            name,
+            category,
+            base_unit,
+            product_group
+          )
+        `)
+        .order('valid_from', { ascending: false })
+        .range(from, from + pageSize - 1);
 
-    if (error) throw error;
+      if (error) throw error;
 
-    allOffers = data || [];
+      if (data && data.length > 0) {
+        loadedOffers.push(...data);
+        if (data.length < pageSize) {
+          hasMore = false;
+        } else {
+          from += pageSize;
+        }
+      } else {
+        hasMore = false;
+      }
+    }
+
+    // Tisztítás: kiszűrjük az esetleges hibás százalékos feliratokat vagy név nélküli tételeket
+    allOffers = loadedOffers.filter(o => {
+      const name = (o.raw_name || '').trim();
+      if (!name || name.startsWith('-') || /^\d+\s*%$/.test(name)) return false;
+      // Kell benne lennie legalább 2 betűnek
+      return /[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ]{2,}/.test(name);
+    });
+
     statusTextEl.textContent = `${allOffers.length.toLocaleString('hu-HU')} ajánlat aktív`;
 
     // Kategóriák és termékcsoportok összegyűjtése
