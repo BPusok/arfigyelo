@@ -1,0 +1,376 @@
+﻿brand;owner_store;kind;pair_group;counterpart;lidl_db;aldi_db
+AMERICAN;aldi;food;Amerikai élelmiszerek;MCENNEDY;0;9
+CHOCEUR;aldi;food;Csokoládé;FIN CARRÉ;0;5
+HÚSMESTER;aldi;food;Friss hús;HÚSFARM;0;12
+UP2FASHION MEN;aldi;nonfood;Férfi ruházat;LIVERGY;0;2
+LE GUSTO;aldi;food;Fűszer és ételízesítő;KANIA;0;70
+HAPPY HARVEST;aldi;food;Gabonapehely és magvak;CROWNFIELD;0;22
+GOLDEN BRIDGE;aldi;food;Gabonapehely és müzli;CROWNFIELD;0;19
+BBQ;aldi;food;Grilltermékek;GRILL & CHILL;0;2
+KIDS WORLD;aldi;nonfood;Gyermekruházat;LUPILU;0;2
+L&D;aldi;nonfood;Gyermekruházat;LUPILU;0;9
+LILY & DAN;aldi;nonfood;Gyermekruházat;LUPILU;0;3
+SWEET VALLEY;aldi;food;Gyümölcskonzerv;HARVEST BASKET;0;1
+RIO D’ORO;aldi;food;Gyümölcslé;SOLEVITA;0;1
+LYTTOS;aldi;food;Görög élelmiszerek;ERIDANOUS;0;4
+ALMARE SEAFOOD;aldi;food;Hal és tenger gyümölcsei;NIXE;0;11
+TOYLINO;aldi;nonfood;Játék;PLAYTIVE;0;14
+CROFTON;aldi;nonfood;Konyhai felszerelés;ERNESTO;0;19
+AMBIANO;aldi;nonfood;Konyhai kisgép;SILVERCREST;0;14
+KING’S CROWN;aldi;food;Konzerv zöldség;FRESHONA;0;2
+ROMEO PREMIUM;aldi;nonfood;Kutyaeledel;ORLANDO;0;1
+BARISSIMO;aldi;food;Kávé;BELLAROM;0;13
+DAYLICIOUS;aldi;food;Kávéital és tejdesszert;;0;5
+THE DELI;aldi;food;Kényelmi élelmiszer;CHEF SELECT;0;1
+WONNEMEYER;aldi;food;Kényelmi élelmiszer és saláta;CHEF SELECT;0;8
+GOOD CHOICE;aldi;food;Készétel;CHEF SELECT;0;7
+SNACK TIME;aldi;food;Készétel;CHEF SELECT;0;2
+FRAICHO;aldi;food;Készétel és hűtött finomságok;CHEF SELECT;0;5
+PRIMANA;aldi;food;Készétel és mélyhűtött;CULINEA;0;8
+HOME CREATION;aldi;nonfood;Lakberendezés és háztartás;LIVARNO HOME;0;36
+NOVITESSE;aldi;nonfood;Lakástextil;LIVARNO HOME;0;13
+GRANDESSA;aldi;food;Lekvár és dzsem;MARIBEL;0;13
+BELLASAN;aldi;food;Margarin és étolaj;VITA D'OR;0;9
+ENJOY FREE;aldi;food;Mentes termékek;;0;15
+NUSETT;aldi;food;Mogyorókrém;CHOCEUR;0;1
+ALL SEASONS;aldi;food;Mélyhűtött zöldség és gyümölcs;FRESHONA;0;3
+UP2FASHION WOMEN;aldi;nonfood;Női ruházat;ESMARA;0;8
+REGIONE CHE VAI;aldi;food;Olasz élelmiszer;ITALIAMO;0;1
+CUCINA;aldi;food;Olasz élelmiszerek;ITALIAMO;0;29
+CUCINA NOBILE;aldi;food;Olasz élelmiszerek;ITALIAMO;0;8
+KOKETT;aldi;nonfood;Papíráru;FLORALYS;0;6
+SILKYLUX;aldi;nonfood;Papíráru;FLORALYS;0;2
+MOSER ROTH;aldi;food;Prémium csokoládé;J.D. GROSS;0;1
+GOURMET;aldi;food;Prémium élelmiszer;DELUXE;0;1
+GOURMET FINEST CUISINE;aldi;food;Prémium élelmiszer;DELUXE;0;8
+AZON MELEGÉBEN;aldi;food;Pékáru;;0;52
+PANTASTICO;aldi;food;Pékáru;;0;3
+BON-RI;aldi;food;Rizs;GOLDEN SUN;0;8
+UP2FASHION;aldi;nonfood;Ruházat;ESMARA;0;1
+SNACK FUN;aldi;food;Sós snack;ALESTO;0;5
+KARLSKRONE;aldi;food;Sör;ARGUS;0;2
+MONARC;aldi;food;Sütemény és keksz;SONDEY;0;6
+BACK FAMILY;aldi;food;Sütési alapanyagok;BELBAKE;0;1
+FINEST BAKERY;aldi;food;Tartós pékáru és sütemény;TASTINO;0;6
+WESTMINSTER;aldi;food;Tea;LORD NELSON;0;10
+DESIRA;aldi;food;Tejtermék;MILBONA;0;1
+KOKÁRDÁS;aldi;food;Tejtermék;PILOS;0;20
+KOKÁRDÁS UHT;aldi;food;Tejtermék;PILOS;0;2
+MILFINA;aldi;food;Tejtermék;MILBONA;0;8
+MILSANI;aldi;food;Tejtermék;MILBONA;0;91
+MILSANI ESL;aldi;food;Tejtermék;MILBONA;0;3
+MILSANI UHT;aldi;food;Tejtermék;PILOS;0;3
+POWER FORCE;aldi;nonfood;Tisztítószer;W5;0;4
+GOLDLAND;aldi;food;Tojás;;0;2
+MYVAY;aldi;food;Vegán termékek;VEMUNDO;0;7
+CASALUX;aldi;nonfood;Világítás;LIVARNO HOME;0;2
+GLOBETTI;aldi;food;Zöldség- és gyümölcskonzerv;FRESHONA;0;1
+KING'S CROWN;aldi;food;Zöldség- és gyümölcskonzerv;FRESHONA;0;5
+AQUITAS;aldi;food;Ásványvíz;SAGUARO;0;1
+ASIA;aldi;food;Ázsiai ételek;VITASIA;0;1
+ASIA GREEN GARDEN;aldi;food;Ázsiai ételek;VITASIA;0;12
+SWEET LAND;aldi;food;Édesség;SWEET CORNER;0;2
+ÉDES ÍZEK;aldi;food;Édesség;;0;2
+PARKSIDE;lidl;nonfood;Barkácsgép;FERREX;39;0
+PARKSIDE PERFORMANCE;lidl;nonfood;Barkácsgép;FERREX PRO;2;0
+FIN CARRÉ;lidl;food;Csokoládé;CHOCEUR;1;0
+MISTER CHOC;lidl;food;Csokoládé és édesség;CHOCEUR;1;0
+SANITAS;lidl;nonfood;Egészségügyi kisgép;;4;0
+TRONIC;lidl;nonfood;Elektronika és elem;ACTIV ENERGY;10;0
+SILVERCREST;lidl;nonfood;Elektronikai és háztartási kisgép;AMBIANO;11;0
+HARVEST BASKET;lidl;food;Fagyasztott burgonyatermék;;1;0
+OCEAN SEA;lidl;food;Fagyasztott hal;ALMARE SEAFOOD;2;0
+HÚSFARM;lidl;food;Friss hús;HÚSMESTER;4;0
+ESMARA MEN;lidl;nonfood;Férfi ruházat;WATSONS;8;0
+KANIA;lidl;food;Fűszer és szósz;LE GUSTO;3;0
+GRILLMEISTER;lidl;food;Grilltermékek;BBQ;1;0
+O’JELLY;lidl;food;Gumicukor és édesség;SWEET LAND;1;0
+MAX’S WORLD;lidl;nonfood;Gyermekruházat és játék;;11;0
+JAGDSTOLZ;lidl;food;Gyógynövénylikőr;;2;0
+SOLEVITA;lidl;food;Gyümölcslé;RIO D’ORO;6;0
+HAZÁNK KINCSEI;lidl;food;Hagyományos magyar termékek;;3;0
+GASTRONOMIA DI MARE;lidl;food;Hal és tenger gyümölcsei;ALMARE SEAFOOD;1;0
+NAUTICA;lidl;food;Haltermékek;ALMARE SEAFOOD;1;0
+DULANO;lidl;food;Húskészítmény;HÚSMESTER;2;0
+PIKOK;lidl;food;Húskészítmény;HÚSMESTER;4;0
+PIKOK PURE;lidl;food;Húskészítmény;;1;0
+ROPPANT;lidl;food;Húskészítmény;;3;0
+SONDEY;lidl;food;Keksz és ostya;BISCOTTO;2;0
+TASTINO;lidl;food;Keksz és ostya;BISCOTTO;1;0
+BARESA;lidl;food;Konzerv és szószok;CUCINA NOBILE;1;0
+GOLDESSA;lidl;food;Krémsajt;MILSANI;1;0
+CHEF SELECT;lidl;food;Készétel;GOOD CHOICE;4;0
+SELECT & GO;lidl;food;Készétel;;1;0
+LIVARNO HOME;lidl;nonfood;Lakberendezés és otthon;HOME CREATION;8;0
+LIVARNO;lidl;nonfood;Lakberendezés és világítás;CASALUX;20;0
+MARIBEL;lidl;food;Lekvár és dzsem;GRANDESSA;1;0
+SWEET CAT;lidl;nonfood;Macskaeledel;SHAH;1;0
+ESMARA;lidl;nonfood;Női ruházat;UP2FASHION;17;0
+DELUXE;lidl;food;Prémium élelmiszer;GOURMET FINEST CUISINE;1;0
+GOLDEN SUN;lidl;food;Rizs és szárazhüvelyesek;HAPPY HARVEST;1;0
+MATRIKET;lidl;food;Skandináv élelmiszerek;;1;0
+CRIVIT;lidl;nonfood;Sportruházat és felszerelés;CRANE;19;0
+COMBINO;lidl;food;Száraztészta;CUCINA NOBILE;1;0
+CIEN BEAUTY;lidl;nonfood;Szépségápolás;LACURA;3;0
+ARGUS;lidl;food;Sör;KARLSKRONE;2;0
+PERLENBACHER;lidl;food;Sör;BERGKÖNIG;1;0
+MILBONA;lidl;food;Tejtermék;MILSANI;7;0
+PILOS;lidl;food;Tejtermék;MILSANI;6;0
+TASTE OF DEUTSCHLAND;lidl;food;Tematikus élelmiszer;;14;0
+CIEN;lidl;nonfood;Testápolás;LACURA;1;0
+W5;lidl;nonfood;Tisztítószer;TANDIL;19;0
+FRESHONA;lidl;food;Zöldség- és gyümölcskonzerv;KING'S CROWN;3;0
+RYNECZEK LIDLA;lidl;food;Zöldség-gyümölcs;;2;0
+REAL NATURE;lidl;food;Zöldségkonzerv;;1;0
+SAGUARO;lidl;food;Ásványvíz;;1;0
+QUALITÉ SUISSE;lidl;food;Édesség;CHOEUR SUISSE;2;0
+SWEET CORNER;lidl;food;Édesség;SWEET LAND;1;0
+SWEET MANUFACTURE;lidl;food;Édesség;;1;0
+SÜSSLI;lidl;food;Édesítőszer;;0;1
+CASTELGY;lidl;food;Égetett szesz;;1;0
+TINNER BROS;;food;Alkoholos ital;;1;0
+VÁRDA;;food;Alkoholos ital;;1;0
+TRUE DATES;;food;Aszalt gyümölcs;;0;3
+VALDOR;;food;Baromfihús;;1;0
+PRONTO;;nonfood;Bútorápoló;;1;4
+SCHÖFFERHOFER;;food;Búzasör;;1;0
+PRINGLES;;food;Chips;;1;1
+SOMERSBY;;food;Cider;;1;0
+LINDT;;food;Csokoládé;;1;0
+MILKA;;food;Csokoládé;;1;0
+TIBI;;food;Csokoládé;;0;4
+TOBLERONE;;food;Csokoládé;;2;0
+VADÁSZ;;food;Csokoládé;;1;0
+KITKAT;;food;Csokoládé és ostya;;1;0
+CUKORMANUFAKTÚRA;;food;Cukor;;0;2
+KORONÁS CUKOR;;food;Cukor;;0;1
+SWEET FAMILY;;food;Cukor;;0;1
+CAVENDISH;;food;Cukorka;;1;0
+TP-LINK;;nonfood;Elektronika;;1;0
+DURACELL;;nonfood;Elem;;1;0
+HELL;;food;Energiaital;;1;0
+ABONETT;;food;Extrudált kenyér;;1;4
+FROSTA;;food;Fagyasztott hal és zöldség;;1;0
+IGLO;;food;Fagyasztott élelmiszer;;0;2
+PERWOLL;;nonfood;Finommosószer;;0;3
+SENSODYNE;;nonfood;Fogkrém;;0;3
+KNORR;;food;Fűszer és instant étel;;1;4
+BOMBAY SAPPHIRE;;food;Gin;;1;0
+HARIBO;;food;Gumicukor;;1;1
+DR. M;;nonfood;Gyógyhatású termék és kozmetikum;;1;0
+JÄGERMEISTER;;food;Gyógynövénylikőr;;0;3
+CAPRI SUN;;food;Gyümölcsital;;1;0
+KUBU PLAY;;food;Gyümölcslé;;1;0
+TOPJOY;;food;Gyümölcslé;;1;0
+REMINGTON;;nonfood;Hajformázó és borotva;;5;0
+HEAD & SHOULDERS;;nonfood;Hajápolás;;0;2
+RIBELLA;;food;Hummusz;;1;2
+BRAUN;;nonfood;Háztartási és szépségápolási kisgép;;1;0
+GYULAI;;food;Húskészítmény;;1;2
+KAISER;;food;Húskészítmény;;0;1
+KOMETA;;food;Húskészítmény;;0;2
+PICK;;food;Húskészítmény;;2;6
+RÁKÓCZI;;food;Húskészítmény;;1;0
+TAURIS;;food;Húskészítmény;;0;1
+WIESBAUER;;food;Húskészítmény;;1;0
+NESCAFÉ;;food;Instant kávé;;0;6
+NISSIN;;food;Instant tészta;;2;2
+SAMYANG;;food;Instant tészta;;0;4
+BELLA;;nonfood;Intimhigiénia;;0;1
+CAREFREE;;nonfood;Intimhigiénia;;1;2
+TUTTI;;food;Italpor és sütési alapanyag;;1;0
+XIXO;;food;Jegestea és üdítő;;1;0
+ACTIVIA;;food;Joghurt;;0;4
+ACTIMEL;;food;Joghurtital;;0;2
+CARTE D’OR;;food;Jégkrém;;1;0
+BAHLSEN;;food;Keksz;;0;6
+LEIBNIZ;;food;Keksz;;0;6
+MESE;;food;Keksz;;2;0
+OREO;;food;Keksz;;1;0
+DETKI;;food;Keksz és édesség;;2;0
+GYŐRI;;food;Keksz és édesség;;0;1
+GYŐRI ÉDES;;food;Keksz és édesség;;0;1
+BONDUELLE;;food;Konzerv zöldség;;0;4
+CAOLA;;nonfood;Kozmetika;;2;0
+PHILADELPHIA;;food;Krémsajt;;1;0
+CAFE FREI;;food;Kávé;;1;0
+MACI;;food;Kávé;;2;0
+DUNKIN';;food;Kávé és fánk;;0;9
+DUNKIN’;;food;Kávé és fánk;;0;2
+HORIZONT;;food;Kézműves sör;;1;0
+SZENT ANDRÁS;;food;Kézműves sör;;1;0
+SZENT ANDRÁS SÖRFŐZDE;;food;Kézműves sör;;1;0
+MÜHLHÄUSER;;food;Lekvár és dzsem;;1;0
+BAILEYS;;food;Likőr;;1;0
+TATRATEA;;food;Likőr;;1;0
+GLADE;;nonfood;Légfrissítő;;0;3
+PREVITAL CAT FOOD;;nonfood;Macskaeledel;;0;8
+PURINA FELIX;;nonfood;Macskaeledel;;0;2
+MOGYI;;food;Magvak és sós snack;;6;0
+BORDS EVE;;food;Margarin;;1;3
+DELMA;;food;Margarin;;0;1
+FLORA;;food;Margarin;;0;1
+RAMA;;food;Margarin;;2;1
+NUTELLA;;food;Mogyorókrém;;1;0
+JAR;;nonfood;Mosogatószer;;0;2
+BIOPON;;nonfood;Mosószer;;1;0
+PERSIL;;nonfood;Mosószer;;1;0
+SZARVASI;;food;Mozzarella és sajt;;0;4
+HESTER’S LIFE;;food;Müzli és granola;;1;0
+BIO;;food;NEM MÁRKA;;0;1
+BÉCSI FÜSTÖLT VIRSLI;;food;NEM MÁRKA;;0;1
+CORNETTI;;food;NEM MÁRKA;;1;0
+CSIRKEMELLSONKA;;food;NEM MÁRKA;;0;1
+CSIRKEVIRSLI;;food;NEM MÁRKA;;0;1
+FAIRTRADE;;food;NEM MÁRKA;;0;2
+FARM;;food;NEM MÁRKA;;0;2
+FOKHAGYMA;;food;NEM MÁRKA;;0;1
+FRANCIAORSZÁG CABERNET SAUVIGNON;;food;NEM MÁRKA;;0;1
+FRANKFURTI VIRSLI;;food;NEM MÁRKA;;0;1
+FRISSEN;;food;NEM MÁRKA;;0;3
+GIGA ALMA;;food;NEM MÁRKA;;0;1
+JONAGOLD ALMA;;food;NEM MÁRKA;;0;1
+KACSA- VAGY LIBAMÁJAS;;food;NEM MÁRKA;;0;1
+KLASSZIKUS TEMETŐI DÍSZ;;nonfood;NEM MÁRKA;;0;1
+KRIZANTÉMBOKOR;;nonfood;NEM MÁRKA;;0;2
+KÖRTE;;food;NEM MÁRKA;;0;1
+LASKAGOMBA;;food;NEM MÁRKA;;0;1
+LICENSED;;nonfood;NEM MÁRKA;;0;2
+MELANGE;;food;NEM MÁRKA;;2;0
+MINI SERTÉSMÁJAS;;food;NEM MÁRKA;;0;2
+NAGY VIRÁGÚ KRIZANTÉM;;nonfood;NEM MÁRKA;;0;2
+NEMESPENÉSZES SZALÁMI;;food;NEM MÁRKA;;0;1
+ORCHIDEA;;nonfood;NEM MÁRKA;;0;1
+PALERMO PAPRIKA 300;;food;NEM MÁRKA;;0;1
+PETREZSELYEMZÖLD;;food;NEM MÁRKA;;0;1
+PIROS;;food;NEM MÁRKA;;1;0
+PIROS VAGY KÉK;;food;NEM MÁRKA;;0;1
+PULYKAMELLSONKA;;food;NEM MÁRKA;;0;1
+RETRO;;food;NEM MÁRKA;;1;0
+SERTÉSCOMBSONKA;;food;NEM MÁRKA;;0;1
+SZILVA;;food;NEM MÁRKA;;0;1
+SZÁRAZKOLBÁSZ;;food;NEM MÁRKA;;0;1
+SÁRGARÉPA;;food;NEM MÁRKA;;0;2
+SÜTŐTÖK;;food;NEM MÁRKA;;0;1
+TEMETŐI OLAJMÉCSES;;food;NEM MÁRKA;;0;1
+TÉLISZALÁMI;;food;NEM MÁRKA;;0;1
+TÖLTETLEN KEMÉNYCUKORKA;;food;NEM MÁRKA;;0;1
+VILLÁNY;;food;NEM MÁRKA;;0;1
+ÁFONYA;;food;NEM MÁRKA;;0;1
+ŐSZI VIRÁGCSOKOR;;food;NEM MÁRKA;;0;1
+ALPRO;;food;Növényi ital;;0;3
+ALPRO 100;;food;Növényi ital;;0;1
+ZEWA;;nonfood;Papírtermék;;1;0
+OOOPS!;;nonfood;Papíráru;;1;2
+SZAVO;;nonfood;Penészölő szer;;0;2
+7DAYS;;food;Péksütemény;;1;0
+ARANYCIPÓ;;food;Pékáru;;0;8
+LIPÓTI;;food;Pékáru;;0;1
+MÁNYA;;food;Rizs és hüvelyesek;;0;1
+BUGATTI;;nonfood;Ruházat;;1;0
+ESPRIT;;nonfood;Ruházat;;1;0
+TOM TAILOR;;nonfood;Ruházat;;1;0
+LEGENDARIO;;food;Rövidital;;1;0
+ZWACK;;food;Rövidital;;1;0
+BABYBEL;;food;Sajt;;1;0
+KARAVÁN;;food;Sajt;;0;1
+PRESIDENT;;food;Sajt;;1;0
+HAJDÚ;;food;Sajt és tejtermék;;0;1
+ALMETTE;;food;Sajtkrém;;1;0
+DAVE&JON'S;;food;Snack és aszalt gyümölcs;;1;0
+VITALADE;;food;Sportital;;1;0
+MAXSPORT;;food;Sporttáplálkozás;;0;8
+ROYAL;;food;Szeszes ital;;1;0
+COLGATE;;nonfood;Szájápolás;;1;0
+LISTERINE;;nonfood;Szájápolás;;0;2
+BARILLA;;food;Száraztészta;;0;6
+CSÁSZÁR;;food;Száraztészta;;0;10
+PHILIPS;;nonfood;Szépségápolási és háztartási kisgép;;1;0
+FRUTTAMAX;;food;Szörp;;1;0
+PIROSKA;;food;Szörp;;0;1
+PÖLÖSKEI;;food;Szörp;;1;0
+CHIO;;food;Sós snack;;1;2
+CSIPET ROPI;;food;Sós snack;;1;0
+POM-BÄR;;food;Sós snack;;1;0
+TAKIS;;food;Sós snack;;1;0
+TURTLE CHIP;;food;Sós snack;;1;0
+1664 KRONENBOURG;;food;Sör;;0;6
+BECK'S;;food;Sör;;0;1
+BECK’S;;food;Sör;;0;1
+BIRRA MORETTI;;food;Sör;;0;2
+CARLSBERG;;food;Sör;;1;2
+GÖSSER;;food;Sör;;1;0
+HACKER PSCHORR;;food;Sör;;1;0
+HB;;food;Sör;;0;1
+KŐBÁNYAI;;food;Sör;;1;0
+LÖWENBRÄU;;food;Sör;;1;1
+PANNON IMPERIAL;;food;Sör;;1;0
+PILSNER URQUELL;;food;Sör;;0;1
+PÉCSI;;food;Sör;;0;1
+PÉCSI SZALON;;food;Sör;;0;1
+SOPRONI;;food;Sör;;1;0
+STEFFL;;food;Sör;;1;0
+STELLA ARTOIS;;food;Sör;;0;2
+MARLENKA;;food;Sütemény;;1;0
+MR. BROWNIE;;food;Sütemény;;1;0
+DR. OETKER;;food;Sütési hozzávalók és fagyasztott pizza;;2;16
+CLEANMAXX;;nonfood;Takarítógép;;2;0
+LIPTON;;food;Tea;;1;2
+LOYD TEA;;food;Tea;;0;4
+TEEKANNE;;food;Tea;;0;3
+RISKA UHT;;food;Tej;;0;1
+NÁDUDVARI;;food;Tej- és hústermék;;0;4
+CSERPES;;food;Tejtermék;;0;1
+CSERPES SAJTMŰHELY;;food;Tejtermék;;0;3
+CSERPES TEJIVÓ;;food;Tejtermék;;0;1
+DANONE;;food;Tejtermék;;2;3
+MESÉS;;food;Tejtermék;;2;0
+MILLI;;food;Tejtermék;;0;4
+MILRAM;;food;Tejtermék;;0;1
+MIZO;;food;Tejtermék;;2;0
+MÜLLER;;food;Tejtermék;;2;0
+NÖM WIENER;;food;Tejtermék;;1;0
+PARMALAT;;food;Tejtermék;;1;0
+RISKA;;food;Tejtermék;;0;2
+TOLLE;;food;Tejtermék;;0;2
+TOLLE ESL;;food;Tejtermék;;0;2
+ZOTT;;food;Tejtermék;;2;7
+DOVE;;nonfood;Testápolás;;0;1
+LACTOVIT;;nonfood;Testápolás;;0;2
+L’ANGELICA;;nonfood;Testápolás;;1;0
+THE PINK STUFF;;nonfood;Tisztítószer;;1;0
+ULTRA;;nonfood;Tisztítószer;;1;0
+ULTRA VIOLA;;nonfood;Tisztítószer;;1;0
+FARM TOJÁS;;food;Tojás;;0;1
+PÖTTYÖS;;food;Túródesszert;;3;2
+KOCKÁS;;food;Túrórúd és édesség;;2;0
+RÓZSACSOKOR;;nonfood;Virág;;0;1
+1X1 VITAMIN;;food;Vitamin;;2;0
+ZUBROWKA;;food;Vodka;;1;0
+DUCK;;nonfood;WC-tisztítás;;2;8
+BREF;;nonfood;WC-tisztító;;1;0
+BALLANTINE'S;;food;Whisky;;1;0
+HUNGAROFETT;;food;Zsiradék;;1;0
+DARLING;;food;Állateledel;;0;1
+DOG MENUE;;food;Állateledel;;1;0
+GOURMET GOLD;;food;Állateledel;;0;2
+PURINA;;nonfood;Állateledel;;0;5
+BOMBI;;food;Édesség;;1;0
+FERRERO;;food;Édesség;;0;2
+KINDER;;food;Édesség;;3;2
+KOJAK;;food;Édesség;;2;0
+SMARTIES;;food;Édesség;;1;2
+STORCK;;food;Édesség;;0;2
+SZERENCSI;;food;Édesség;;2;0
+NESTLE;;food;Édesség és gabonapehely;;1;0
+NESTLÉ;;food;Édesség és gabonapehely;;1;0
+GRANT’S;;food;Égetett szesz;;0;1
+VEGETA;;food;Ételízesítő;;1;1
+KUNSÁGI ÉDEN;;food;Étolaj;;0;1
+VÉNUSZ;;food;Étolaj és margarin;;0;2
+COCCOLINO;;nonfood;Öblítő;;1;1
+APENTA制品;;food;Üdítőital;;0;0
+COCA-COLA;;food;Üdítőital;;0;2
+KINLEY;;food;Üdítőital;;1;1
+PEPSI;;food;Üdítőital;;1;1
+QUEEN;;food;Üdítőital;;2;0

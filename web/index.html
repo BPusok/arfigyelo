@@ -175,9 +175,23 @@
         </div>
       </section>
 
-      <!-- 2. FÜL: Átlagárak & Elemzés nézet -->
+      <!-- 2. FÜL: Márka- és Sajátmárka-összehasonlító nézet -->
       <section id="view-analytics" class="tab-page" style="display:none;">
-        <!-- Felső KPI összefoglaló kártyák -->
+        <!-- Összehasonlítási mód választó (Sajátmárka párharc vs Gyártói márkák) -->
+        <div class="comp-mode-section">
+          <div class="comp-mode-tabs" id="comp-mode-tabs">
+            <button class="comp-mode-btn active" data-mode="private" id="mode-btn-private">
+              <span class="mode-title">🛒 Sajátmárka-párharc</span>
+              <span class="mode-sub">Lidl vs. Aldi (Pilos vs. Milsani, Parkside vs. Ferrex/Workzone...)</span>
+            </button>
+            <button class="comp-mode-btn" data-mode="national" id="mode-btn-national">
+              <span class="mode-title">🏷️ Közös gyártói márkák</span>
+              <span class="mode-sub">Azonos márkák mindkét boltban (Pick, Pöttyös, Danone, Dr. Oetker...)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Felső KPI összefoglaló kártyák a kiválasztott összehasonlításhoz -->
         <div class="analytics-kpis-grid">
           <div class="kpi-card" id="kpi-cheaper-store">
             <div class="kpi-icon-wrap trophy">
@@ -189,9 +203,9 @@
               </svg>
             </div>
             <div>
-              <div class="kpi-label">Heti Összesített Árelőny</div>
+              <div class="kpi-label" id="kpi-winner-label">Párharc Győztese</div>
               <div class="kpi-value" id="kpi-winner-text">Számítás...</div>
-              <div class="kpi-sub" id="kpi-winner-sub">Termékcsoportok átlagos egységára alapján</div>
+              <div class="kpi-sub" id="kpi-winner-sub">Közvetlen termékpárok alapján</div>
             </div>
           </div>
 
@@ -203,9 +217,9 @@
               </svg>
             </div>
             <div>
-              <div class="kpi-label">Legnagyobb Árkülönbség</div>
-              <div class="kpi-value" id="kpi-biggest-diff">Számítás...</div>
-              <div class="kpi-sub" id="kpi-diff-sub">A két áruház között</div>
+              <div class="kpi-label">Közvetlenül Párosított Termékek</div>
+              <div class="kpi-value" id="kpi-matched-count">0 termékpár</div>
+              <div class="kpi-sub" id="kpi-matched-sub">Mindkét boltban megtalálható</div>
             </div>
           </div>
 
@@ -218,83 +232,51 @@
               </svg>
             </div>
             <div>
-              <div class="kpi-label">AI Besorolt Termékcsoport</div>
-              <div class="kpi-value" id="kpi-group-count">0 csoport</div>
-              <div class="kpi-sub" id="kpi-items-count">0 beolvasott ajánlatból</div>
+              <div class="kpi-label" id="kpi-selector-label">Elérhető Párok</div>
+              <div class="kpi-value" id="kpi-selector-count">0 db</div>
+              <div class="kpi-sub" id="kpi-selector-sub">Kattints alább a vizsgálathoz</div>
             </div>
           </div>
         </div>
 
-        <!-- Termékcsoport pill választó sáv -->
+        <!-- Termékcsoport / Márka pill választó sáv -->
         <div class="group-selector-section">
           <div class="group-selector-header">
-            <h3>Válassz termékcsoportot az átlagárak részletes vizsgálatához:</h3>
-            <span class="group-selector-hint">Kattints egy kategóriára az összehasonlításhoz</span>
+            <h3 id="comp-selector-title">Válassz termékkört a márkák összehasonlításához:</h3>
+            <span class="group-selector-hint" id="comp-selector-hint">Kattints egy elemre a közvetlen termékpárok megjelenítéséhez</span>
           </div>
-          <div class="group-pills" id="group-pills-container">
-            <!-- Dinamikus gombok (Virsli, Kenyér és pékáru, Sajt, stb.) -->
+          <div class="group-pills" id="comp-pills-container">
+            <!-- Dinamikus gombok -->
           </div>
         </div>
 
-        <!-- Kiemelt csoport összehasonlító kártya -->
-        <div class="group-detail-card" id="group-detail-card">
-          <div class="group-detail-header">
+        <!-- Közvetlen 1-az-1-ben Párosított Termékkártyák szekció -->
+        <div class="matched-section">
+          <div class="matched-section-header">
             <div>
-              <span class="section-tag">Kiemelt Elemzés</span>
-              <h2 id="selected-group-title">Kenyér és pékáru</h2>
+              <span class="section-tag" id="matched-section-tag">Közvetlen Párharc</span>
+              <h2 id="matched-header-title">Összehasonlított termékpárok</h2>
             </div>
-            <div class="group-winner-badge" id="group-winner-badge">
-              <!-- Pl. "Aldi 12%-kal olcsóbb" -->
+            <div class="group-winner-badge" id="matched-winner-badge">
+              <!-- Pl. "Aldi 3 termékben olcsóbb" -->
             </div>
           </div>
 
-          <div class="group-comparison-grid">
-            <!-- Lidl oszlop -->
-            <div class="store-comparison-col lidl-col">
-              <div class="store-col-header">
-                <span class="store-badge lidl">LIDL</span>
-                <span class="col-count" id="lidl-group-count">0 termék</span>
-              </div>
-              <div class="avg-price-box">
-                <span class="avg-price-label">Átlagos egységár:</span>
-                <span class="avg-price-value" id="lidl-avg-unit-price">- Ft/kg</span>
-              </div>
-              <div class="cheapest-item-box" id="lidl-cheapest-box">
-                <span class="cheapest-label">Legolcsóbb termék a csoportban:</span>
-                <div class="cheapest-name" id="lidl-cheapest-name">-</div>
-                <div class="cheapest-price" id="lidl-cheapest-price">- Ft</div>
-              </div>
-            </div>
-
-            <!-- Aldi oszlop -->
-            <div class="store-comparison-col aldi-col">
-              <div class="store-col-header">
-                <span class="store-badge aldi">ALDI</span>
-                <span class="col-count" id="aldi-group-count">0 termék</span>
-              </div>
-              <div class="avg-price-box">
-                <span class="avg-price-label">Átlagos egységár:</span>
-                <span class="avg-price-value" id="aldi-avg-unit-price">- Ft/kg</span>
-              </div>
-              <div class="cheapest-item-box" id="aldi-cheapest-box">
-                <span class="cheapest-label">Legolcsóbb termék a csoportban:</span>
-                <div class="cheapest-name" id="aldi-cheapest-name">-</div>
-                <div class="cheapest-price" id="aldi-cheapest-price">- Ft</div>
-              </div>
-            </div>
+          <div class="matched-grid" id="matched-products-grid">
+            <!-- Dinamikus 1-az-1-ben termékpárok kártyái -->
           </div>
         </div>
 
         <!-- Fő Összehasonlító Diagram Kártya -->
-        <div class="analytics-chart-section">
+        <div class="analytics-chart-section" id="comp-chart-section">
           <div class="chart-header">
             <div>
-              <h3>Lidl vs. Aldi Átlagos Egységárak (Ft/kg vagy Ft/l)</h3>
-              <p class="chart-subtitle">A legfontosabb termékcsoportok átlagos fajlagos árai a heti adatok alapján</p>
+              <h3 id="comp-chart-title">Párosított Termékek Egységára (Ft/kg vagy Ft/l)</h3>
+              <p class="chart-subtitle" id="comp-chart-subtitle">Lidl vs. Aldi árak egymás mellett a kiválasztott termékkörben</p>
             </div>
             <div class="chart-legend-custom">
-              <span class="legend-chip lidl"><span class="color-box"></span> Lidl átlag</span>
-              <span class="legend-chip aldi"><span class="color-box"></span> Aldi átlag</span>
+              <span class="legend-chip lidl"><span class="color-box"></span> Lidl</span>
+              <span class="legend-chip aldi"><span class="color-box"></span> Aldi</span>
             </div>
           </div>
           <div class="chart-canvas-wrapper">
