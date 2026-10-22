@@ -1,32 +1,48 @@
-// Árfigyelő Web Alkalmazás
+// Árfigyelő Web Alkalmazás – Lidl & Aldi Akció- és Árkövető
 import { createClient } from '@supabase/supabase-js';
+import Chart from 'chart.js/auto';
 
-// Supabase konfiguráció (publikus anon kulcs és projekt URL)
+// Supabase konfiguráció
 const SUPABASE_URL = 'https://npbdwncxrckvricbtktz.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_msZVswp3iu9CwQCtvyJpyA_8Apm3nVm';
-
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Állapot (State)
 let allOffers = [];
 let categories = new Set();
+let productGroupsMap = new Map();
 let watchlist = new Set(JSON.parse(localStorage.getItem('arfigyelo_watchlist') || '[]'));
+
+let currentTab = 'products'; // 'products' | 'analytics'
 let currentStore = 'all';
+let currentSource = 'all'; // 'all' | 'flyer' | 'regular'
 let currentCategory = 'all';
 let currentSort = 'name-asc';
 let currentSearch = '';
 let showOnlyWatchlist = false;
 let currentView = 'grid'; // 'grid' | 'table'
+let selectedGroup = null;
+
+// Chart.js példányok (újrarajzolás előtt el kell pusztítani őket)
+let productChartInstance = null;
+let analyticsChartInstance = null;
 
 // DOM Elemek
+const viewTabs = document.getElementById('main-tabs');
+const tabBtnProducts = document.getElementById('tab-btn-products');
+const tabBtnAnalytics = document.getElementById('tab-btn-analytics');
+const viewProducts = document.getElementById('view-products');
+const viewAnalytics = document.getElementById('view-analytics');
+
 const productsContainer = document.getElementById('products-container');
 const emptyState = document.getElementById('empty-state');
 const resultsCountEl = document.getElementById('results-count');
 const searchInput = document.getElementById('search-input');
 const clearSearchBtn = document.getElementById('clear-search');
+const storeFilterGroup = document.getElementById('store-filter');
+const sourceSelect = document.getElementById('source-select');
 const categorySelect = document.getElementById('category-select');
 const sortSelect = document.getElementById('sort-select');
-const storeFilterGroup = document.getElementById('store-filter');
 const watchlistToggleBtn = document.getElementById('watchlist-toggle-btn');
 const watchlistCountEl = document.getElementById('watchlist-count');
 const statusTextEl = document.getElementById('status-text');
@@ -42,6 +58,25 @@ const modalCategory = document.getElementById('modal-category');
 const modalSummary = document.getElementById('modal-summary');
 const modalHistoryList = document.getElementById('modal-history-list');
 
+// Elemzés Nézet Elemek
+const kpiWinnerText = document.getElementById('kpi-winner-text');
+const kpiWinnerSub = document.getElementById('kpi-winner-sub');
+const kpiBiggestDiff = document.getElementById('kpi-biggest-diff');
+const kpiDiffSub = document.getElementById('kpi-diff-sub');
+const kpiGroupCount = document.getElementById('kpi-group-count');
+const kpiItemsCount = document.getElementById('kpi-items-count');
+const groupPillsContainer = document.getElementById('group-pills-container');
+const selectedGroupTitle = document.getElementById('selected-group-title');
+const groupWinnerBadge = document.getElementById('group-winner-badge');
+const lidlGroupCount = document.getElementById('lidl-group-count');
+const lidlAvgUnitPrice = document.getElementById('lidl-avg-unit-price');
+const lidlCheapestName = document.getElementById('lidl-cheapest-name');
+const lidlCheapestPrice = document.getElementById('lidl-cheapest-price');
+const aldiGroupCount = document.getElementById('aldi-group-count');
+const aldiAvgUnitPrice = document.getElementById('aldi-avg-unit-price');
+const aldiCheapestName = document.getElementById('aldi-cheapest-name');
+const aldiCheapestPrice = document.getElementById('aldi-cheapest-price');
+
 // Inicializálás
 async function init() {
   updateWatchlistBadge();
@@ -53,8 +88,7 @@ async function init() {
 async function fetchOffers() {
   try {
     statusTextEl.textContent = 'Adatok betöltése...';
-    
-    // Lekérjük az összes érvényes ajánlatot és a kapcsolódó termékinformációkat
+
     const { data, error } = await supabase
       .from('offers')
       .select(`
@@ -73,7 +107,8 @@ async function fetchOffers() {
           id,
           name,
           category,
-          base_unit
+          base_unit,
+          product_group
         )
       `)
       .order('valid_from', { ascending: false });
@@ -81,17 +116,43 @@ async function fetchOffers() {
     if (error) throw error;
 
     allOffers = data || [];
-    statusTextEl.textContent = `${allOffers.length} ajánlat betöltve`;
+    statusTextEl.textContent = `${allOffers.length.toLocaleString('hu-HU')} ajánlat aktív`;
 
-    // Kategóriák összegyűjtése
+    // Kategóriák és termékcsoportok összegyűjtése
     categories.clear();
+    productGroupsMap.clear();
+
     allOffers.forEach(o => {
       const cat = o.products?.category;
       if (cat) categories.add(cat);
+
+      const group = o.products?.product_group || 'Egyéb termékek';
+      if (!productGroupsMap.has(group)) {
+        productGroupsMap.set(group, {
+          name: group,
+          offers: [],
+          lidlOffers: [],
+          aldiOffers: [],
+          lidlUnitPrices: [],
+          aldiUnitPrices: []
+        });
+      }
+
+      const gData = productGroupsMap.get(group);
+      gData.offers.push(o);
+
+      if (o.store_id === 'lidl') {
+        gData.lidlOffers.push(o);
+        if (o.unit_price && o.unit_price > 0) gData.lidlUnitPrices.push(o.unit_price);
+      } else if (o.store_id === 'aldi') {
+        gData.aldiOffers.push(o);
+        if (o.unit_price && o.unit_price > 0) gData.aldiUnitPrices.push(o.unit_price);
+      }
     });
 
     populateCategories();
     render();
+    initAnalyticsData();
   } catch (err) {
     console.error('Hiba az adatok lekérésekor:', err);
     statusTextEl.textContent = 'Hiba a betöltéskor!';
@@ -110,8 +171,16 @@ function populateCategories() {
   });
 }
 
-// Eseménykezelők
+// Eseménykezelők beállítása
 function setupEventListeners() {
+  // Fő fülváltó navigáció
+  viewTabs.addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    const tab = btn.dataset.tab;
+    switchTab(tab);
+  });
+
   // Keresőmező
   searchInput.addEventListener('input', (e) => {
     currentSearch = e.target.value.trim().toLowerCase();
@@ -136,6 +205,12 @@ function setupEventListeners() {
     render();
   });
 
+  // Forrás szűrő (újság vs bolt)
+  sourceSelect.addEventListener('change', (e) => {
+    currentSource = e.target.value;
+    render();
+  });
+
   // Kategória szűrő
   categorySelect.addEventListener('change', (e) => {
     currentCategory = e.target.value;
@@ -155,26 +230,7 @@ function setupEventListeners() {
     render();
   });
 
-  // Szűrők visszaállítása
-  resetFiltersBtn.addEventListener('click', () => {
-    currentStore = 'all';
-    currentCategory = 'all';
-    currentSearch = '';
-    currentSort = 'name-asc';
-    showOnlyWatchlist = false;
-
-    searchInput.value = '';
-    categorySelect.value = 'all';
-    sortSelect.value = 'name-asc';
-    watchlistToggleBtn.classList.remove('active');
-    storeFilterGroup.querySelectorAll('.seg-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.store === 'all');
-    });
-
-    render();
-  });
-
-  // Nézetváltás
+  // Nézetváltók (kártya / táblázat)
   viewGridBtn.addEventListener('click', () => {
     currentView = 'grid';
     viewGridBtn.classList.add('active');
@@ -189,17 +245,77 @@ function setupEventListeners() {
     render();
   });
 
-  // Modal bezárása
+  // Szűrők visszaállítása gomb
+  resetFiltersBtn.addEventListener('click', resetFilters);
+
+  // Terméklista eseménydelegálás (kedvenc csillag és ártörténet modal)
+  productsContainer.addEventListener('click', (e) => {
+    const starBtn = e.target.closest('.star-btn');
+    if (starBtn) {
+      const prodName = starBtn.dataset.product;
+      toggleWatchlist(prodName);
+      return;
+    }
+
+    const histBtn = e.target.closest('.history-btn');
+    if (histBtn) {
+      const prodName = histBtn.dataset.product;
+      openHistoryModal(prodName);
+    }
+  });
+
+  // Modal bezárás
   modalCloseBtn.addEventListener('click', closeModal);
   historyModal.addEventListener('click', (e) => {
     if (e.target === historyModal) closeModal();
   });
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && historyModal.style.display === 'flex') {
+      closeModal();
+    }
   });
 }
 
-// Watchlist kezelése
+// Fülváltás
+function switchTab(tab) {
+  currentTab = tab;
+  tabBtnProducts.classList.toggle('active', tab === 'products');
+  tabBtnAnalytics.classList.toggle('active', tab === 'analytics');
+
+  if (tab === 'products') {
+    viewProducts.style.display = 'block';
+    viewAnalytics.style.display = 'none';
+  } else {
+    viewProducts.style.display = 'none';
+    viewAnalytics.style.display = 'block';
+    renderAnalyticsView();
+  }
+}
+
+// Szűrők alaphelyzetbe állítása
+function resetFilters() {
+  searchInput.value = '';
+  currentSearch = '';
+  clearSearchBtn.style.display = 'none';
+  currentStore = 'all';
+  currentSource = 'all';
+  currentCategory = 'all';
+  currentSort = 'name-asc';
+  showOnlyWatchlist = false;
+
+  storeFilterGroup.querySelectorAll('.seg-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.store === 'all');
+  });
+  sourceSelect.value = 'all';
+  categorySelect.value = 'all';
+  sortSelect.value = 'name-asc';
+  watchlistToggleBtn.classList.remove('active');
+
+  render();
+}
+
+// Kedvencek (Watchlist) kezelése
 function toggleWatchlist(productName) {
   if (watchlist.has(productName)) {
     watchlist.delete(productName);
@@ -215,167 +331,162 @@ function updateWatchlistBadge() {
   watchlistCountEl.textContent = watchlist.size;
 }
 
-// Szűrés és rendezés
-function getFilteredOffers() {
-  return allOffers.filter(o => {
-    // Bolt szűrő
+// ==========================================================================
+// 1. TERMÉKKATALÓGUS MEGJELENÍTÉS & SZŰRÉS
+// ==========================================================================
+function render() {
+  let filtered = allOffers.filter(o => {
+    // Bolt szűrés
     if (currentStore !== 'all' && o.store_id !== currentStore) return false;
 
-    // Kategória szűrő
-    const cat = o.products?.category;
-    if (currentCategory !== 'all' && cat !== currentCategory) return false;
+    // Forrás szűrés
+    if (currentSource !== 'all' && o.source !== currentSource) return false;
 
-    // Figyelőlista szűrő
-    const pName = o.products?.name || o.raw_name;
-    if (showOnlyWatchlist && !watchlist.has(pName)) return false;
+    // Kategória szűrés
+    if (currentCategory !== 'all' && o.products?.category !== currentCategory) return false;
 
-    // Szöveges keresés
+    // Keresőszó szűrés
     if (currentSearch) {
-      const matchName = (o.products?.name || '').toLowerCase().includes(currentSearch);
-      const matchRaw = (o.raw_name || '').toLowerCase().includes(currentSearch);
-      const matchBrand = (o.brand || '').toLowerCase().includes(currentSearch);
-      if (!matchName && !matchRaw && !matchBrand) return false;
+      const pName = (o.products?.name || '').toLowerCase();
+      const rawName = (o.raw_name || '').toLowerCase();
+      const groupName = (o.products?.product_group || '').toLowerCase();
+      if (!pName.includes(currentSearch) && !rawName.includes(currentSearch) && !groupName.includes(currentSearch)) {
+        return false;
+      }
+    }
+
+    // Csak figyelőlista
+    if (showOnlyWatchlist) {
+      const pName = o.products?.name || o.raw_name;
+      if (!watchlist.has(pName)) return false;
     }
 
     return true;
-  }).sort((a, b) => {
-    if (currentSort === 'name-asc') {
-      const nameA = a.products?.name || a.raw_name;
-      const nameB = b.products?.name || b.raw_name;
-      return nameA.localeCompare(nameB, 'hu');
-    }
-    if (currentSort === 'price-asc') {
-      return a.price - b.price;
-    }
-    if (currentSort === 'discount-desc') {
-      const discA = a.original_price ? ((a.original_price - a.price) / a.original_price) : 0;
-      const discB = b.original_price ? ((b.original_price - b.price) / b.original_price) : 0;
-      return discB - discA;
-    }
-    if (currentSort === 'unit-asc') {
-      const uA = a.unit_price || 999999;
-      const uB = b.unit_price || 999999;
-      return uA - uB;
-    }
-    if (currentSort === 'date-desc') {
-      return (b.valid_from || '').localeCompare(a.valid_from || '');
-    }
-    return 0;
   });
-}
 
-// Megjelenítés (Render)
-function render() {
-  const filtered = getFilteredOffers();
-  resultsCountEl.textContent = `${filtered.length} ajánlat található`;
+  // Rendezés
+  filtered.sort((a, b) => {
+    switch (currentSort) {
+      case 'price-asc':
+        return a.price - b.price;
+      case 'discount-desc': {
+        const discA = a.original_price ? ((a.original_price - a.price) / a.original_price) : 0;
+        const discB = b.original_price ? ((b.original_price - b.price) / b.original_price) : 0;
+        return discB - discA;
+      }
+      case 'unit-asc':
+        return (a.unit_price || 999999) - (b.unit_price || 999999);
+      case 'date-desc':
+        return (b.valid_from || '').localeCompare(a.valid_from || '');
+      case 'name-asc':
+      default:
+        return (a.products?.name || a.raw_name).localeCompare(b.products?.name || b.raw_name, 'hu');
+    }
+  });
+
+  resultsCountEl.textContent = `${filtered.length.toLocaleString('hu-HU')} ajánlat található`;
 
   if (filtered.length === 0) {
     productsContainer.style.display = 'none';
     emptyState.style.display = 'block';
-    return;
-  }
-
-  emptyState.style.display = 'none';
-  productsContainer.style.display = currentView === 'grid' ? 'grid' : 'block';
-
-  if (currentView === 'grid') {
-    productsContainer.className = 'products-grid';
-    productsContainer.innerHTML = filtered.map(createProductCard).join('');
   } else {
-    productsContainer.className = 'products-table-wrap';
-    productsContainer.innerHTML = createProductsTable(filtered);
+    productsContainer.style.display = currentView === 'grid' ? 'grid' : 'block';
+    emptyState.style.display = 'none';
+
+    if (currentView === 'grid') {
+      renderCards(filtered);
+    } else {
+      renderTable(filtered);
+    }
   }
-
-  // Események csatolása a gombokhoz (star & history)
-  productsContainer.querySelectorAll('.star-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleWatchlist(btn.dataset.product);
-    });
-  });
-
-  productsContainer.querySelectorAll('.history-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openHistoryModal(btn.dataset.product);
-    });
-  });
 }
 
-// Kártya HTML sablon
-function createProductCard(o) {
-  const pName = o.products?.name || o.raw_name;
-  const isStarred = watchlist.has(pName);
-  const storeName = o.store_id.toUpperCase();
-  const unitText = o.unit_price && o.products?.base_unit 
-    ? `${Math.round(o.unit_price).toLocaleString('hu-HU')} Ft/${o.products.base_unit}` 
-    : '';
+// Kártyás nézet renderelése
+function renderCards(items) {
+  productsContainer.className = 'products-grid';
+  productsContainer.innerHTML = items.map(o => {
+    const pName = o.products?.name || o.raw_name;
+    const isStarred = watchlist.has(pName);
+    const storeClass = o.store_id === 'lidl' ? 'lidl' : 'aldi';
+    const storeCardClass = o.store_id === 'lidl' ? 'lidl-card' : 'aldi-card';
 
-  let discountBadge = '';
-  if (o.original_price && o.original_price > o.price) {
-    const percent = Math.round(((o.original_price - o.price) / o.original_price) * 100);
-    discountBadge = `<span class="discount-badge">-${percent}%</span>`;
-  }
+    // Kedvezmény számítása
+    let discountBadge = '';
+    if (o.original_price && o.original_price > o.price) {
+      const pct = Math.round(((o.original_price - o.price) / o.original_price) * 100);
+      if (pct > 0) discountBadge = `<span class="discount-badge">-${pct}%</span>`;
+    }
 
-  const flyerBadge = o.source === 'flyer' ? '<span class="tag-pill flyer">📰 Újság</span>' : '';
+    // Forrás badge
+    const sourceBadge = o.source === 'regular'
+      ? `<span class="tag-pill regular" title="Normál bolti alapár">🏪 Bolti ár</span>`
+      : `<span class="tag-pill flyer" title="Heti akciós újság ajánlat">📰 Újság</span>`;
 
-  return `
-    <article class="product-card store-${o.store_id}">
-      <div class="card-top">
-        <span class="store-badge ${o.store_id}">${storeName}</span>
-        <div class="card-actions">
-          ${flyerBadge}
-          <button class="star-btn ${isStarred ? 'starred' : ''}" data-product="${escapeHtml(pName)}" title="Hozzáadás a figyelőlistához">
+    // Egységár
+    let unitPriceHtml = '';
+    if (o.unit_price && o.products?.base_unit) {
+      unitPriceHtml = `<span class="unit-price">${Math.round(o.unit_price).toLocaleString('hu-HU')} Ft/${o.products.base_unit}</span>`;
+    }
+
+    const groupTag = o.products?.product_group
+      ? `<span class="product-group-tag">${escapeHtml(o.products.product_group)}</span>`
+      : '';
+
+    return `
+      <div class="product-card ${storeCardClass}">
+        <div class="card-top">
+          <div class="card-badges">
+            <span class="store-badge ${storeClass}">${o.store_id.toUpperCase()}</span>
+            ${sourceBadge}
+            ${discountBadge}
+          </div>
+          <button class="star-btn ${isStarred ? 'starred' : ''}" data-product="${escapeHtml(pName)}" title="Figyelőlistához adás">
             ${isStarred ? '★' : '☆'}
           </button>
         </div>
-      </div>
 
-      <h3 class="card-title">${escapeHtml(o.raw_name)}</h3>
-      
-      <div class="card-subtitle">
-        ${o.brand ? `<strong>${escapeHtml(o.brand)}</strong>` : ''}
-        ${o.package ? `<span>&bull; ${escapeHtml(o.package)}</span>` : ''}
-        ${o.products?.category ? `<span class="cat-badge">${escapeHtml(o.products.category)}</span>` : ''}
-      </div>
-
-      <div class="card-pricing">
-        <div class="price-main">
-          ${o.original_price ? `
-            <div class="original-price-wrap">
-              <span>${Math.round(o.original_price).toLocaleString('hu-HU')} Ft</span>
-              ${discountBadge}
+        <div class="card-body">
+          <h3 class="product-title" title="${escapeHtml(o.raw_name)}">${escapeHtml(o.raw_name)}</h3>
+          <div class="product-meta">
+            ${groupTag}
+            ${o.package ? `<span>${escapeHtml(o.package)}</span>` : ''}
+          </div>
+          <div class="price-container">
+            <div>
+              <span class="current-price">${Math.round(o.price).toLocaleString('hu-HU')} Ft</span>
+              ${o.original_price ? `<span class="original-price">${Math.round(o.original_price).toLocaleString('hu-HU')} Ft</span>` : ''}
             </div>
-          ` : ''}
-          <div class="current-price">${Math.round(o.price).toLocaleString('hu-HU')} Ft</div>
+            ${unitPriceHtml}
+          </div>
         </div>
-        ${unitText ? `<div class="unit-price">${unitText}</div>` : ''}
-      </div>
 
-      <div class="card-footer">
-        <span class="validity">🗓️ ${formatDate(o.valid_from)}${o.valid_to ? ' - ' + formatDate(o.valid_to) : ''}</span>
-        <button class="history-btn" data-product="${escapeHtml(pName)}">Ártörténet</button>
+        <div class="card-footer">
+          <span>${formatDate(o.valid_from)}${o.valid_to ? ' - ' + formatDate(o.valid_to) : ''}</span>
+          <button class="history-btn" data-product="${escapeHtml(pName)}">Ártörténet</button>
+        </div>
       </div>
-    </article>
-  `;
+    `;
+  }).join('');
 }
 
-// Táblázat HTML sablon
-function createProductsTable(items) {
-  return `
+// Táblázatos nézet renderelése
+function renderTable(items) {
+  productsContainer.className = 'table-responsive';
+  productsContainer.innerHTML = `
     <table class="products-table">
       <thead>
         <tr>
           <th style="width: 40px;"></th>
           <th>Bolt</th>
-          <th>Termék</th>
-          <th>Kategória</th>
+          <th>Forrás</th>
+          <th>Terméknév</th>
+          <th>Csoport</th>
           <th>Kiszerelés</th>
-          <th>Akciós ár</th>
+          <th>Ár</th>
           <th>Eredeti ár</th>
           <th>Egységár</th>
           <th>Érvényesség</th>
-          <th>Művelet</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -385,6 +496,7 @@ function createProductsTable(items) {
           const unitText = o.unit_price && o.products?.base_unit 
             ? `${Math.round(o.unit_price).toLocaleString('hu-HU')} Ft/${o.products.base_unit}` 
             : '-';
+          const srcText = o.source === 'regular' ? '🏪 Bolti' : '📰 Újság';
           return `
             <tr>
               <td>
@@ -393,14 +505,15 @@ function createProductsTable(items) {
                 </button>
               </td>
               <td><span class="store-badge ${o.store_id}">${o.store_id.toUpperCase()}</span></td>
+              <td><span class="tag-pill ${o.source === 'regular' ? 'regular' : 'flyer'}">${srcText}</span></td>
               <td><strong>${escapeHtml(o.raw_name)}</strong></td>
-              <td>${escapeHtml(o.products?.category || '-')}</td>
+              <td>${escapeHtml(o.products?.product_group || '-')}</td>
               <td>${escapeHtml(o.package || '-')}</td>
               <td><strong style="color: #fff; font-family: var(--font-mono);">${Math.round(o.price).toLocaleString('hu-HU')} Ft</strong></td>
               <td style="color: var(--text-dim); text-decoration: line-through;">
                 ${o.original_price ? `${Math.round(o.original_price).toLocaleString('hu-HU')} Ft` : '-'}
               </td>
-              <td style="font-family: var(--font-mono);">${unitText}</td>
+              <td style="font-family: var(--font-mono); color: var(--emerald-400);">${unitText}</td>
               <td>${formatDate(o.valid_from)}</td>
               <td><button class="history-btn" data-product="${escapeHtml(pName)}">Történet</button></td>
             </tr>
@@ -411,14 +524,263 @@ function createProductsTable(items) {
   `;
 }
 
-// Ártörténet modal megnyitása
+// ==========================================================================
+// 2. ÁTLAGÁRAK & ELEMZÉS NÉZET
+// ==========================================================================
+function initAnalyticsData() {
+  if (productGroupsMap.size === 0) return;
+
+  // Kiválasztjuk az alapértelmezett csoportot (pl. "Kenyér és pékáru" vagy a legnépesebb)
+  const popularGroups = ['Kenyér és pékáru', 'Sajt', 'Virsli', 'Tejtermék és tojás', 'Húskészítmény'];
+  for (const p of popularGroups) {
+    if (productGroupsMap.has(p)) {
+      selectedGroup = p;
+      break;
+    }
+  }
+  if (!selectedGroup) {
+    selectedGroup = productGroupsMap.keys().next().value;
+  }
+}
+
+function renderAnalyticsView() {
+  if (productGroupsMap.size === 0) return;
+
+  // Csoportok rangsorolása termékszám szerint
+  const sortedGroups = Array.from(productGroupsMap.values()).sort((a, b) => b.offers.length - a.offers.length);
+
+  // 1. KPI Számítások
+  let lidlWins = 0;
+  let aldiWins = 0;
+  let totalLidlSum = 0;
+  let totalAldiSum = 0;
+  let comparedGroupCount = 0;
+  let maxDiffPct = 0;
+  let maxDiffGroup = '-';
+
+  sortedGroups.forEach(g => {
+    if (g.lidlUnitPrices.length > 0 && g.aldiUnitPrices.length > 0) {
+      const lidlAvg = g.lidlUnitPrices.reduce((a, b) => a + b, 0) / g.lidlUnitPrices.length;
+      const aldiAvg = g.aldiUnitPrices.reduce((a, b) => a + b, 0) / g.aldiUnitPrices.length;
+
+      totalLidlSum += lidlAvg;
+      totalAldiSum += aldiAvg;
+      comparedGroupCount++;
+
+      const diff = Math.abs(lidlAvg - aldiAvg) / ((lidlAvg + aldiAvg) / 2);
+      if (diff > maxDiffPct) {
+        maxDiffPct = diff;
+        maxDiffGroup = g.name;
+      }
+
+      if (lidlAvg < aldiAvg) lidlWins++;
+      else if (aldiAvg < lidlAvg) aldiWins++;
+    }
+  });
+
+  // Heti győztes KPI
+  if (comparedGroupCount > 0) {
+    const overallDiff = Math.abs(totalLidlSum - totalAldiSum) / ((totalLidlSum + totalAldiSum) / 2) * 100;
+    if (totalAldiSum < totalLidlSum) {
+      kpiWinnerText.textContent = `Aldi ${overallDiff.toFixed(1)}%-kal olcsóbb`;
+      kpiWinnerText.style.color = 'var(--aldi-accent)';
+      kpiWinnerSub.textContent = `${aldiWins} kategóriában olcsóbb (Lidl: ${lidlWins})`;
+    } else {
+      kpiWinnerText.textContent = `Lidl ${overallDiff.toFixed(1)}%-kal olcsóbb`;
+      kpiWinnerText.style.color = 'var(--lidl-accent)';
+      kpiWinnerSub.textContent = `${lidlWins} kategóriában olcsóbb (Aldi: ${aldiWins})`;
+    }
+    kpiBiggestDiff.textContent = `${maxDiffGroup} (${Math.round(maxDiffPct * 100)}%)`;
+  } else {
+    kpiWinnerText.textContent = 'Adatgyűjtés folyamatban';
+    kpiBiggestDiff.textContent = '-';
+  }
+
+  kpiGroupCount.textContent = `${productGroupsMap.size} csoport`;
+  kpiItemsCount.textContent = `${allOffers.length.toLocaleString('hu-HU')} beolvasott tételből`;
+
+  // 2. Csoportválasztó gombok renderelése
+  groupPillsContainer.innerHTML = sortedGroups.slice(0, 20).map(g => {
+    const isActive = g.name === selectedGroup;
+    return `
+      <button class="group-pill-btn ${isActive ? 'active' : ''}" data-group="${escapeHtml(g.name)}">
+        <span>${escapeHtml(g.name)}</span>
+        <span class="group-pill-count">${g.offers.length}</span>
+      </button>
+    `;
+  }).join('');
+
+  // Csoport gomb kattintás kezelése
+  groupPillsContainer.onclick = (e) => {
+    const btn = e.target.closest('.group-pill-btn');
+    if (!btn) return;
+    selectedGroup = btn.dataset.group;
+    renderAnalyticsView();
+  };
+
+  // 3. Kiválasztott csoport részletes adatai
+  const curr = productGroupsMap.get(selectedGroup);
+  if (curr) {
+    selectedGroupTitle.textContent = curr.name;
+
+    const lidlAvg = curr.lidlUnitPrices.length > 0 
+      ? Math.round(curr.lidlUnitPrices.reduce((a, b) => a + b, 0) / curr.lidlUnitPrices.length)
+      : null;
+    const aldiAvg = curr.aldiUnitPrices.length > 0
+      ? Math.round(curr.aldiUnitPrices.reduce((a, b) => a + b, 0) / curr.aldiUnitPrices.length)
+      : null;
+
+    lidlGroupCount.textContent = `${curr.lidlOffers.length} ajánlat`;
+    aldiGroupCount.textContent = `${curr.aldiOffers.length} ajánlat`;
+
+    lidlAvgUnitPrice.textContent = lidlAvg ? `${lidlAvg.toLocaleString('hu-HU')} Ft/egység` : 'Nincs egységár';
+    aldiAvgUnitPrice.textContent = aldiAvg ? `${aldiAvg.toLocaleString('hu-HU')} Ft/egység` : 'Nincs egységár';
+
+    // Győztes badge
+    if (lidlAvg && aldiAvg) {
+      if (lidlAvg < aldiAvg) {
+        const pct = Math.round(((aldiAvg - lidlAvg) / aldiAvg) * 100);
+        groupWinnerBadge.textContent = `🏆 Lidl ${pct}%-kal kedvezőbb átlagár!`;
+        groupWinnerBadge.style.color = 'var(--lidl-brand-yellow)';
+        groupWinnerBadge.style.background = 'rgba(250, 204, 21, 0.15)';
+        groupWinnerBadge.style.borderColor = 'rgba(250, 204, 21, 0.35)';
+      } else if (aldiAvg < lidlAvg) {
+        const pct = Math.round(((lidlAvg - aldiAvg) / lidlAvg) * 100);
+        groupWinnerBadge.textContent = `🏆 Aldi ${pct}%-kal kedvezőbb átlagár!`;
+        groupWinnerBadge.style.color = 'var(--aldi-accent)';
+        groupWinnerBadge.style.background = 'rgba(56, 189, 248, 0.15)';
+        groupWinnerBadge.style.borderColor = 'rgba(56, 189, 248, 0.35)';
+      } else {
+        groupWinnerBadge.textContent = '⚖️ Megegyező átlagos árszint';
+      }
+    } else {
+      groupWinnerBadge.textContent = 'Csak az egyik boltban elérhető adat';
+    }
+
+    // Legolcsóbb termékek
+    const cheapestLidl = curr.lidlOffers.length > 0 
+      ? curr.lidlOffers.reduce((min, o) => o.price < min.price ? o : min, curr.lidlOffers[0]) 
+      : null;
+    const cheapestAldi = curr.aldiOffers.length > 0
+      ? curr.aldiOffers.reduce((min, o) => o.price < min.price ? o : min, curr.aldiOffers[0])
+      : null;
+
+    if (cheapestLidl) {
+      lidlCheapestName.textContent = cheapestLidl.raw_name;
+      lidlCheapestPrice.textContent = `${Math.round(cheapestLidl.price).toLocaleString('hu-HU')} Ft`;
+    } else {
+      lidlCheapestName.textContent = 'Nincs adat';
+      lidlCheapestPrice.textContent = '-';
+    }
+
+    if (cheapestAldi) {
+      aldiCheapestName.textContent = cheapestAldi.raw_name;
+      aldiCheapestPrice.textContent = `${Math.round(cheapestAldi.price).toLocaleString('hu-HU')} Ft`;
+    } else {
+      aldiCheapestName.textContent = 'Nincs adat';
+      aldiCheapestPrice.textContent = '-';
+    }
+  }
+
+  // 4. Chart.js diagram kirajzolása (Lidl vs. Aldi átlagárak kategóriánként)
+  renderAnalyticsChart(sortedGroups);
+}
+
+function renderAnalyticsChart(sortedGroups) {
+  const chartCanvas = document.getElementById('analytics-chart');
+  if (!chartCanvas) return;
+
+  // Kiválasztjuk a top 10 olyan csoportot, ahol mindkét boltban van egységár adat
+  const comparableGroups = sortedGroups
+    .filter(g => g.lidlUnitPrices.length > 0 && g.aldiUnitPrices.length > 0)
+    .slice(0, 10);
+
+  if (comparableGroups.length === 0) return;
+
+  const labels = comparableGroups.map(g => g.name);
+  const lidlData = comparableGroups.map(g => {
+    return Math.round(g.lidlUnitPrices.reduce((a, b) => a + b, 0) / g.lidlUnitPrices.length);
+  });
+  const aldiData = comparableGroups.map(g => {
+    return Math.round(g.aldiUnitPrices.reduce((a, b) => a + b, 0) / g.aldiUnitPrices.length);
+  });
+
+  if (analyticsChartInstance) {
+    analyticsChartInstance.destroy();
+  }
+
+  analyticsChartInstance = new Chart(chartCanvas, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Lidl átlagos egységár (Ft)',
+          data: lidlData,
+          backgroundColor: 'rgba(250, 204, 21, 0.85)',
+          borderColor: '#facc15',
+          borderWidth: 1.5,
+          borderRadius: 6
+        },
+        {
+          label: 'Aldi átlagos egységár (Ft)',
+          data: aldiData,
+          backgroundColor: 'rgba(56, 189, 248, 0.85)',
+          borderColor: '#38bdf8',
+          borderWidth: 1.5,
+          borderRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false // Egyedi HTML legendát használunk
+        },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          titleColor: '#fff',
+          bodyColor: '#cbd5e1',
+          borderColor: 'rgba(255, 255, 255, 0.1)',
+          borderWidth: 1,
+          padding: 12,
+          callbacks: {
+            label: (context) => ` ${context.dataset.label}: ${context.raw.toLocaleString('hu-HU')} Ft/egység`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255, 255, 255, 0.05)' },
+          ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 11 } }
+        },
+        y: {
+          grid: { color: 'rgba(255, 255, 255, 0.08)' },
+          ticks: {
+            color: '#94a3b8',
+            font: { family: 'JetBrains Mono', size: 11 },
+            callback: (val) => `${val.toLocaleString('hu-HU')} Ft`
+          }
+        }
+      }
+    }
+  });
+}
+
+// ==========================================================================
+// 3. TERMÉK ÁRTÖRTÉNET MODAL & CHART.JS GRAFIKON
+// ==========================================================================
 function openHistoryModal(productName) {
   const matches = allOffers.filter(o => (o.products?.name || o.raw_name) === productName);
   if (matches.length === 0) return;
 
   const first = matches[0];
   modalProductName.textContent = productName;
-  modalCategory.textContent = first.products?.category ? `Kategória: ${first.products.category}` : '';
+  modalCategory.textContent = first.products?.category 
+    ? `Kategória: ${first.products.category} (${first.products.product_group || 'Termékcsoport'})` 
+    : '';
 
   // Statisztika számítása
   const prices = matches.map(m => m.price);
@@ -428,7 +790,7 @@ function openHistoryModal(productName) {
 
   modalSummary.innerHTML = `
     <div>
-      <div class="summary-stat-val" style="color: var(--accent-green);">${minPrice.toLocaleString('hu-HU')} Ft</div>
+      <div class="summary-stat-val" style="color: var(--emerald-400);">${minPrice.toLocaleString('hu-HU')} Ft</div>
       <div class="summary-stat-label">Legalacsonyabb ár</div>
     </div>
     <div>
@@ -448,18 +810,110 @@ function openHistoryModal(productName) {
         <span class="store-badge ${m.store_id}">${m.store_id.toUpperCase()}</span>
         <div>
           <div><strong>${escapeHtml(m.raw_name)}</strong></div>
-          <div class="timeline-date">${formatDate(m.valid_from)}${m.valid_to ? ' - ' + formatDate(m.valid_to) : ''}</div>
+          <div class="timeline-date">${formatDate(m.valid_from)}${m.valid_to ? ' - ' + formatDate(m.valid_to) : ''} &bull; ${m.source === 'regular' ? 'Bolti ár' : 'Akciós újság'}</div>
         </div>
       </div>
       <div class="timeline-price">${Math.round(m.price).toLocaleString('hu-HU')} Ft</div>
     </div>
   `).join('');
 
+  // Termékszintű Chart.js Vonaldiagram kirajzolása
+  renderProductHistoryChart(matches);
+
   historyModal.style.display = 'flex';
+}
+
+function renderProductHistoryChart(matches) {
+  const canvas = document.getElementById('product-chart');
+  if (!canvas) return;
+
+  // Dátum szerint növekvő sorrendbe rendezzük
+  const sorted = [...matches].sort((a, b) => (a.valid_from || '').localeCompare(b.valid_from || ''));
+
+  const labels = sorted.map(m => formatDate(m.valid_from) || 'Mai');
+  const lidlPoints = sorted.map(m => m.store_id === 'lidl' ? m.price : null);
+  const aldiPoints = sorted.map(m => m.store_id === 'aldi' ? m.price : null);
+
+  if (productChartInstance) {
+    productChartInstance.destroy();
+  }
+
+  productChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Lidl ár (Ft)',
+          data: lidlPoints,
+          borderColor: '#facc15',
+          backgroundColor: 'rgba(250, 204, 21, 0.2)',
+          pointBackgroundColor: '#facc15',
+          pointBorderColor: '#000',
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          borderWidth: 2.5,
+          tension: 0.25,
+          spanGaps: true
+        },
+        {
+          label: 'Aldi ár (Ft)',
+          data: aldiPoints,
+          borderColor: '#38bdf8',
+          backgroundColor: 'rgba(56, 189, 248, 0.2)',
+          pointBackgroundColor: '#38bdf8',
+          pointBorderColor: '#000',
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          borderWidth: 2.5,
+          tension: 0.25,
+          spanGaps: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { color: '#cbd5e1', font: { family: 'Plus Jakarta Sans', weight: '600' } }
+        },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          titleColor: '#fff',
+          bodyColor: '#cbd5e1',
+          borderColor: 'rgba(255, 255, 255, 0.1)',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            label: (ctx) => ` ${ctx.dataset.label}: ${ctx.raw ? Math.round(ctx.raw).toLocaleString('hu-HU') + ' Ft' : '-'}`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255, 255, 255, 0.05)' },
+          ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 11 } }
+        },
+        y: {
+          grid: { color: 'rgba(255, 255, 255, 0.08)' },
+          ticks: {
+            color: '#94a3b8',
+            font: { family: 'JetBrains Mono', size: 11 },
+            callback: (val) => `${val.toLocaleString('hu-HU')} Ft`
+          }
+        }
+      }
+    }
+  });
 }
 
 function closeModal() {
   historyModal.style.display = 'none';
+  if (productChartInstance) {
+    productChartInstance.destroy();
+    productChartInstance = null;
+  }
 }
 
 // Segédfüggvények
@@ -482,5 +936,5 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-// Indítás
+// Alkalmazás indítása
 init();

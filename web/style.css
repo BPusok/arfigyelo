@@ -1,37 +1,75 @@
 :root {
-  --bg-primary: #0b0f19;
-  --bg-surface: #111827;
-  --bg-surface-elevated: #1f2937;
-  --bg-surface-glass: rgba(17, 24, 39, 0.75);
-  
-  --border-subtle: #2d3748;
-  --border-focus: #3b82f6;
-  
-  --text-main: #f9fafb;
-  --text-muted: #9ca3af;
-  --text-dim: #6b7280;
-  
-  --accent-primary: #3b82f6;
-  --accent-secondary: #8b5cf6;
-  --accent-gold: #f59e0b;
-  --accent-green: #10b981;
-  --accent-red: #ef4444;
-  
-  /* Bolt színek */
-  --lidl-blue: #0050aa;
-  --lidl-yellow: #fff000;
-  --aldi-navy: #001e4a;
-  --aldi-cyan: #00b0f0;
-  
+  /* ==========================================================================
+     1. PRIMITIVE DESIGN TOKENS
+     ========================================================================== */
+  --slate-950: #070a12;
+  --slate-900: #0b0f19;
+  --slate-850: #0f1624;
+  --slate-800: #131c2e;
+  --slate-700: #1e293b;
+  --slate-600: #334155;
+  --slate-500: #64748b;
+  --slate-400: #94a3b8;
+  --slate-300: #cbd5e1;
+  --slate-100: #f1f5f9;
+
+  --emerald-500: #10b981;
+  --emerald-400: #34d399;
+  --emerald-900: rgba(16, 185, 129, 0.15);
+
+  --amber-500: #f59e0b;
+  --amber-400: #fbbf24;
+  --amber-900: rgba(245, 158, 11, 0.15);
+
+  --rose-500: #ef4444;
+  --blue-500: #3b82f6;
+  --indigo-500: #6366f1;
+
+  /* Brand Colors */
+  --lidl-brand-blue: #0050aa;
+  --lidl-brand-yellow: #fff000;
+  --lidl-accent: #facc15;
+  --aldi-brand-navy: #001e4a;
+  --aldi-brand-cyan: #00b0f0;
+  --aldi-accent: #38bdf8;
+
+  /* ==========================================================================
+     2. SEMANTIC TOKENS
+     ========================================================================== */
+  --bg-primary: var(--slate-900);
+  --bg-surface: var(--slate-850);
+  --bg-surface-elevated: var(--slate-800);
+  --bg-surface-glass: rgba(15, 22, 36, 0.85);
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-card: rgba(255, 255, 255, 0.12);
+  --border-focus: var(--blue-500);
+
+  --text-main: #f8fafc;
+  --text-muted: var(--slate-400);
+  --text-dim: var(--slate-500);
+
+  --accent-primary: var(--blue-500);
+  --accent-green: var(--emerald-500);
+  --accent-gold: var(--amber-500);
+  --accent-red: var(--rose-500);
+
+  /* Radius */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;
+  --radius-xl: 24px;
   --radius-full: 9999px;
-  
+
+  /* Shadows & Glow */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
-  
+  --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.55);
+  --glow-lidl: 0 0 20px rgba(250, 204, 21, 0.15);
+  --glow-aldi: 0 0 20px rgba(56, 189, 248, 0.15);
+  --glow-green: 0 0 20px rgba(16, 185, 129, 0.2);
+
+  /* Typography */
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
@@ -50,8 +88,9 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   background-image: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.15), transparent),
-    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08), transparent);
+    radial-gradient(ellipse 90% 50% at 50% -10%, rgba(59, 130, 246, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 85% 20%, rgba(99, 102, 241, 0.08), transparent),
+    radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.04), transparent);
   background-attachment: fixed;
 }
 
@@ -61,70 +100,138 @@ body {
   min-height: 100vh;
 }
 
-/* Fejléc */
+/* ==========================================================================
+   FEJLÉC & FŐ NAVIGÁCIÓ
+   ========================================================================== */
 .app-header {
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: 50;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   background: var(--bg-surface-glass);
   border-bottom: 1px solid var(--border-subtle);
-  padding: 1rem 1.5rem;
+  padding: 0.85rem 1.5rem;
 }
 
 .header-inner {
-  max-width: 1280px;
+  max-width: 1320px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 0.85rem;
+  text-decoration: none;
 }
 
 .logo-badge {
-  font-size: 1.8rem;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.2));
   border: 1px solid rgba(59, 130, 246, 0.4);
   border-radius: var(--radius-md);
-  padding: 0.35rem 0.6rem;
-  box-shadow: 0 0 16px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.25);
+  color: var(--blue-500);
+}
+
+.logo-badge svg {
+  width: 24px;
+  height: 24px;
 }
 
 .brand h1 {
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  background: linear-gradient(to right, #ffffff, #d1d5db);
+  background: linear-gradient(to right, #ffffff, #cbd5e1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .brand .subtitle {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
+}
+
+/* Fő Fülek Navigációja */
+.main-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 0.3rem;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.tab-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+  background: var(--bg-surface-elevated);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.tab-icon {
+  width: 17px;
+  height: 17px;
+}
+
+.tab-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--emerald-500), #059669);
+  color: #000;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.85rem;
 }
 
 .btn-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   background: var(--bg-surface-elevated);
   color: var(--text-main);
   border: 1px solid var(--border-subtle);
-  padding: 0.45rem 0.9rem;
+  padding: 0.45rem 0.95rem;
   border-radius: var(--radius-full);
   font-size: 0.85rem;
   font-weight: 600;
@@ -134,7 +241,7 @@ body {
 
 .btn-pill:hover {
   border-color: var(--accent-gold);
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(245, 158, 11, 0.12);
   color: var(--accent-gold);
 }
 
@@ -144,12 +251,18 @@ body {
   border-color: var(--accent-gold);
 }
 
+.icon-svg {
+  width: 16px;
+  height: 16px;
+}
+
 .badge-count {
   background: rgba(255, 255, 255, 0.15);
   font-size: 0.75rem;
   padding: 0.1rem 0.45rem;
   border-radius: var(--radius-full);
   font-family: var(--font-mono);
+  font-weight: 700;
 }
 
 .btn-pill.active .badge-count {
@@ -163,10 +276,10 @@ body {
   gap: 0.5rem;
   font-size: 0.8rem;
   color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.03);
-  padding: 0.35rem 0.75rem;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-subtle);
+  padding: 0.4rem 0.75rem;
   border-radius: var(--radius-full);
-  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .status-dot {
@@ -174,80 +287,108 @@ body {
   height: 8px;
   border-radius: 50%;
   background: var(--accent-green);
-  box-shadow: 0 0 8px var(--accent-green);
-  display: inline-block;
+  box-shadow: 0 0 10px var(--accent-green);
+  animation: pulse-dot 2.5s infinite;
 }
 
-/* Fő tartalom */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* ==========================================================================
+   FŐ TARTALOM & VEZÉRLŐSÁV
+   ========================================================================== */
 .main-content {
   flex: 1;
-  max-width: 1280px;
+  max-width: 1320px;
   width: 100%;
   margin: 0 auto;
   padding: 1.5rem;
 }
 
-/* Vezérlősáv */
+.tab-page {
+  display: none;
+}
+
+.tab-page.active {
+  display: block;
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .controls-panel {
   background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-card);
   border-radius: var(--radius-lg);
   padding: 1.25rem;
   box-shadow: var(--shadow-md);
   margin-bottom: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  backdrop-filter: blur(8px);
 }
 
 .search-box {
   position: relative;
   display: flex;
   align-items: center;
-  width: 100%;
+  margin-bottom: 1rem;
 }
 
-.search-icon {
+.search-icon-svg {
   position: absolute;
   left: 1rem;
-  font-size: 1.1rem;
+  width: 18px;
+  height: 18px;
   color: var(--text-dim);
   pointer-events: none;
 }
 
 .search-box input {
   width: 100%;
-  padding: 0.85rem 2.8rem 0.85rem 2.8rem;
+  padding: 0.85rem 2.8rem 0.85rem 2.75rem;
   background: var(--bg-primary);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   color: var(--text-main);
+  font-family: var(--font-sans);
   font-size: 0.95rem;
-  font-family: inherit;
   transition: all 0.2s ease;
 }
 
 .search-box input:focus {
   outline: none;
-  border-color: var(--accent-primary);
+  border-color: var(--border-focus);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.search-box input::placeholder {
+  color: var(--text-dim);
 }
 
 .clear-btn {
   position: absolute;
   right: 0.85rem;
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
-  color: var(--text-dim);
-  font-size: 1rem;
-  cursor: pointer;
-  padding: 0.2rem 0.5rem;
+  color: var(--text-muted);
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
 }
 
 .clear-btn:hover {
-  color: var(--text-main);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
 
 .filters-row {
@@ -261,49 +402,33 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.85rem;
 }
 
 .filter-group label {
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-.filter-group select {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-main);
-  padding: 0.5rem 0.85rem;
-  border-radius: var(--radius-sm);
   font-size: 0.85rem;
-  font-family: inherit;
-  cursor: pointer;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.filter-group select:focus {
-  border-color: var(--accent-primary);
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 .segmented-control {
   display: inline-flex;
   background: var(--bg-primary);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 2px;
+  border-radius: var(--radius-md);
+  padding: 0.2rem;
+  gap: 0.2rem;
 }
 
 .seg-btn {
-  background: none;
+  background: transparent;
   border: none;
   color: var(--text-muted);
-  padding: 0.35rem 0.85rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .seg-btn:hover {
@@ -312,54 +437,79 @@ body {
 
 .seg-btn.active {
   background: var(--bg-surface-elevated);
-  color: var(--text-main);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .seg-btn.store-lidl.active {
-  background: rgba(0, 80, 170, 0.4);
-  color: #ffeb3b;
-  border: 1px solid rgba(255, 235, 59, 0.3);
+  background: var(--lidl-brand-blue);
+  color: var(--lidl-brand-yellow);
 }
 
 .seg-btn.store-aldi.active {
-  background: rgba(0, 176, 240, 0.2);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  background: var(--aldi-brand-navy);
+  color: var(--aldi-brand-cyan);
+}
+
+.filter-group select {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: var(--border-focus);
 }
 
 .view-switchers {
   margin-left: auto;
-  display: inline-flex;
+  display: flex;
+  gap: 0.35rem;
   background: var(--bg-primary);
+  padding: 0.2rem;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 2px;
 }
 
 .icon-toggle {
-  background: none;
+  background: transparent;
   border: none;
-  color: var(--text-dim);
-  padding: 0.35rem 0.65rem;
-  font-size: 0.95rem;
-  border-radius: 6px;
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-toggle:hover {
+  color: #fff;
 }
 
 .icon-toggle.active {
   background: var(--bg-surface-elevated);
-  color: var(--text-main);
+  color: #fff;
 }
 
-/* Eredmények sáv */
+/* Statisztika sáv */
 .results-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   font-size: 0.85rem;
   color: var(--text-muted);
+  padding: 0 0.25rem;
 }
 
 .results-legend {
@@ -369,254 +519,282 @@ body {
 }
 
 .legend-item {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
 }
 
 .store-dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  display: inline-block;
 }
 
 .store-dot.lidl {
-  background: #facc15;
-  box-shadow: 0 0 6px rgba(250, 204, 21, 0.8);
+  background: var(--lidl-accent);
+  box-shadow: 0 0 6px rgba(250, 204, 21, 0.6);
 }
 
 .store-dot.aldi {
-  background: #38bdf8;
-  box-shadow: 0 0 6px rgba(56, 189, 248, 0.8);
+  background: var(--aldi-accent);
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
+}
+
+.tag-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
 }
 
 .tag-pill.flyer {
   background: rgba(139, 92, 246, 0.2);
-  color: #c084fc;
-  padding: 0.15rem 0.45rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
-  font-weight: 600;
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
-/* Termék Grid */
+.tag-pill.regular {
+  background: rgba(56, 189, 248, 0.2);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+/* ==========================================================================
+   TERMÉKKÁRTYÁK & TÁBLÁZAT
+   ========================================================================== */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.25rem;
 }
 
 .product-card {
   background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 1.15rem;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
   position: relative;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   overflow: hidden;
 }
 
 .product-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(59, 130, 246, 0.4);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: var(--shadow-lg);
 }
 
-.product-card.store-lidl {
-  border-left: 3px solid #facc15;
+.product-card.lidl-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--lidl-brand-blue), var(--lidl-accent));
 }
 
-.product-card.store-aldi {
-  border-left: 3px solid #38bdf8;
+.product-card.aldi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--aldi-brand-navy), var(--aldi-accent));
 }
 
 .card-top {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
+.card-badges {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
 }
 
 .store-badge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
   padding: 0.2rem 0.55rem;
   border-radius: var(--radius-sm);
-  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .store-badge.lidl {
-  background: rgba(250, 204, 21, 0.15);
-  color: #facc15;
-  border: 1px solid rgba(250, 204, 21, 0.3);
+  background: var(--lidl-brand-blue);
+  color: var(--lidl-brand-yellow);
 }
 
 .store-badge.aldi {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  background: var(--aldi-brand-navy);
+  color: var(--aldi-brand-cyan);
 }
 
-.card-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
+.discount-badge {
+  background: var(--emerald-500);
+  color: #000;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
 }
 
 .star-btn {
   background: none;
   border: none;
-  font-size: 1.15rem;
+  color: var(--slate-600);
+  font-size: 1.35rem;
   cursor: pointer;
-  color: var(--text-dim);
+  line-height: 1;
   transition: transform 0.15s ease, color 0.15s ease;
 }
 
 .star-btn:hover {
-  transform: scale(1.2);
-  color: var(--accent-gold);
+  transform: scale(1.15);
+  color: var(--amber-400);
 }
 
 .star-btn.starred {
-  color: var(--accent-gold);
-  text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  color: var(--amber-400);
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
 }
 
-.card-title {
-  font-size: 1.05rem;
+.card-body {
+  flex: 1;
+  margin-bottom: 1rem;
+}
+
+.product-title {
+  font-size: 1rem;
   font-weight: 700;
-  color: var(--text-main);
+  line-height: 1.35;
   margin-bottom: 0.35rem;
-  line-height: 1.3;
+  color: var(--text-main);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.card-subtitle {
+.product-meta {
   font-size: 0.8rem;
   color: var(--text-muted);
-  margin-bottom: 0.85rem;
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
   flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
-.cat-badge {
-  background: rgba(255, 255, 255, 0.05);
+.product-group-tag {
+  font-size: 0.72rem;
+  color: var(--slate-300);
+  background: rgba(255, 255, 255, 0.06);
   padding: 0.15rem 0.45rem;
   border-radius: 4px;
-  font-size: 0.7rem;
 }
 
-.card-pricing {
-  margin-top: auto;
-  padding-top: 0.85rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+.price-container {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
   display: flex;
+  align-items: baseline;
   justify-content: space-between;
-  align-items: flex-end;
-}
-
-.price-main {
-  display: flex;
-  flex-direction: column;
-}
-
-.original-price-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
-  color: var(--text-dim);
-  text-decoration: line-through;
-}
-
-.discount-badge {
-  background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 0.1rem 0.35rem;
-  border-radius: 4px;
-  text-decoration: none;
 }
 
 .current-price {
-  font-size: 1.45rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  color: #ffffff;
   font-family: var(--font-mono);
-  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+
+.original-price {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  text-decoration: line-through;
+  font-family: var(--font-mono);
+  margin-left: 0.4rem;
 }
 
 .unit-price {
-  font-size: 0.75rem;
-  color: var(--text-muted);
+  font-size: 0.82rem;
+  color: var(--accent-green);
   font-family: var(--font-mono);
+  font-weight: 600;
 }
 
 .card-footer {
-  margin-top: 0.75rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.75rem;
+  padding-top: 0.65rem;
+  border-top: 1px dashed var(--border-subtle);
+  font-size: 0.78rem;
   color: var(--text-dim);
 }
 
-.validity {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
 .history-btn {
-  background: none;
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-subtle);
   color: var(--text-muted);
+  padding: 0.3rem 0.65rem;
   border-radius: var(--radius-sm);
-  padding: 0.2rem 0.5rem;
   font-size: 0.75rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .history-btn:hover {
-  background: var(--bg-surface-elevated);
-  color: var(--accent-primary);
-  border-color: var(--accent-primary);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
-/* Táblázatos nézet */
-.products-table-wrap {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+/* Táblázat nézet */
+.table-responsive {
+  width: 100%;
   overflow-x: auto;
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-md);
 }
 
 .products-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
 }
 
 .products-table th {
-  background: var(--bg-surface-elevated);
-  padding: 0.85rem 1rem;
+  background: var(--slate-950);
   color: var(--text-muted);
-  font-weight: 600;
+  font-weight: 700;
+  padding: 0.85rem 1rem;
   border-bottom: 1px solid var(--border-subtle);
-  white-space: nowrap;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .products-table td {
   padding: 0.85rem 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-subtle);
   color: var(--text-main);
 }
 
@@ -624,74 +802,375 @@ body {
   background: rgba(255, 255, 255, 0.02);
 }
 
-/* Üres állapot */
-.empty-state {
-  text-align: center;
-  padding: 4rem 1.5rem;
+/* ==========================================================================
+   2. FÜL: ÁTLAGÁRAK & ELEMZÉS NÉZET
+   ========================================================================== */
+.analytics-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.kpi-card {
   background: var(--bg-surface);
-  border: 1px dashed var(--border-subtle);
+  border: 1px solid var(--border-card);
   border-radius: var(--radius-lg);
-  margin-top: 1rem;
+  padding: 1.35rem;
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(8px);
 }
 
-.empty-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.empty-state h3 {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-}
-
-.empty-state p {
-  color: var(--text-muted);
-  margin-bottom: 1.25rem;
-}
-
-.btn-primary {
-  background: var(--accent-primary);
-  color: #fff;
-  border: none;
-  padding: 0.55rem 1.25rem;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.btn-primary:hover {
-  opacity: 0.9;
-}
-
-/* Modal */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(6px);
-  z-index: 100;
+.kpi-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpi-icon-wrap svg {
+  width: 26px;
+  height: 26px;
+}
+
+.kpi-icon-wrap.trophy {
+  background: var(--emerald-900);
+  color: var(--emerald-400);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.kpi-icon-wrap.diff {
+  background: var(--amber-900);
+  color: var(--amber-400);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.kpi-icon-wrap.groups {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.kpi-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.kpi-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  font-family: var(--font-sans);
+  color: #fff;
+  line-height: 1.2;
+}
+
+.kpi-sub {
+  font-size: 0.76rem;
+  color: var(--text-dim);
+  margin-top: 0.25rem;
+}
+
+/* Termékcsoport Választó Sáv */
+.group-selector-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 1.35rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+.group-selector-header {
+  margin-bottom: 1rem;
+}
+
+.group-selector-header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.group-selector-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.group-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.group-pill-btn {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  color: var(--slate-300);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.group-pill-btn:hover {
+  background: var(--slate-700);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.group-pill-btn.active {
+  background: linear-gradient(135deg, var(--blue-500), #2563eb);
+  color: #fff;
+  border-color: var(--blue-500);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+}
+
+.group-pill-count {
+  font-size: 0.7rem;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+}
+
+/* Kiemelt csoport összehasonlító kártya */
+.group-detail-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.group-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.section-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--accent-green);
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.group-detail-header h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.group-winner-badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-full);
+  background: var(--emerald-900);
+  color: var(--emerald-400);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: var(--glow-green);
+}
+
+.group-comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.store-comparison-col {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.store-comparison-col.lidl-col {
+  border-top: 3px solid var(--lidl-accent);
+}
+
+.store-comparison-col.aldi-col {
+  border-top: 3px solid var(--aldi-accent);
+}
+
+.store-col-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.col-count {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.avg-price-box {
+  background: var(--bg-surface);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.avg-price-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.avg-price-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+
+.cheapest-item-box {
+  border-top: 1px dashed var(--border-subtle);
+  padding-top: 0.75rem;
+}
+
+.cheapest-label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.cheapest-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cheapest-price {
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--emerald-400);
+  margin-top: 0.2rem;
+}
+
+/* Fő Összehasonlító Diagram Szekció */
+.analytics-chart-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.chart-header h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.chart-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.chart-legend-custom {
+  display: flex;
+  gap: 1rem;
+}
+
+.legend-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.legend-chip .color-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.legend-chip.lidl .color-box {
+  background: var(--lidl-accent);
+}
+
+.legend-chip.aldi .color-box {
+  background: var(--aldi-accent);
+}
+
+.chart-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 380px;
+}
+
+/* ==========================================================================
+   MODAL & TERMÉK ÁRTÖRTÉNET CHART
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
 }
 
 .modal-card {
   background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-card);
   border-radius: var(--radius-lg);
   width: 100%;
-  max-width: 580px;
-  max-height: 85vh;
+  max-width: 680px;
+  max-height: 90vh;
   overflow-y: auto;
   box-shadow: var(--shadow-lg);
-  animation: modalEnter 0.2s ease-out;
-}
-
-@keyframes modalEnter {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
 }
 
 .modal-header {
@@ -716,8 +1195,9 @@ body {
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   cursor: pointer;
+  line-height: 1;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
 }
@@ -738,14 +1218,15 @@ body {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   text-align: center;
 }
 
 .summary-stat-val {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 800;
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   color: #fff;
 }
 
@@ -755,11 +1236,44 @@ body {
   text-transform: uppercase;
 }
 
+.modal-chart-section {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.modal-chart-header h4 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--slate-300);
+}
+
+.chart-unit-label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+}
+
+.modal-chart-canvas-box {
+  position: relative;
+  width: 100%;
+  height: 220px;
+}
+
 .history-timeline {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 1rem;
+  gap: 0.65rem;
+  margin-top: 0.85rem;
 }
 
 .timeline-item {
@@ -787,10 +1301,13 @@ body {
   font-size: 1.1rem;
   font-weight: 700;
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   color: #fff;
 }
 
-/* Lábléc */
+/* ==========================================================================
+   LÁBLÉC & RESZPONZIVITÁS
+   ========================================================================== */
 .app-footer {
   margin-top: auto;
   border-top: 1px solid var(--border-subtle);
@@ -806,15 +1323,27 @@ body {
   color: #4b5563;
 }
 
-/* Reszponzív */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .header-inner {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.85rem;
   }
-  .header-actions {
+  .main-tabs {
+    order: 3;
     width: 100%;
-    justify-content: space-between;
+    justify-content: center;
+  }
+  .group-comparison-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .header-actions {
+    gap: 0.5rem;
+  }
+  .btn-pill span:not(.badge-count) {
+    display: none;
   }
   .filters-row {
     flex-direction: column;
@@ -825,5 +1354,8 @@ body {
   }
   .view-switchers {
     align-self: flex-end;
+  }
+  .analytics-kpis-grid {
+    grid-template-columns: 1fr;
   }
 }
